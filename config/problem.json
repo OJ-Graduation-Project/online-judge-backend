@@ -1,0 +1,116 @@
+[{
+	"problemId": 1,
+	"problemName": "Two Sum",
+	"numberOfSubmissions": 1,
+	"writerId": 789,
+	"description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\nYou can return the answer in any order.",
+	"timeLimit": "200 ms",
+	"memoryLimit": "1000 KB",
+	"Difficulty": "Easy",
+	"testcases": [{
+		"id": 1,
+		"input": "[2,7,11,15] target=9",
+		"output": "[0,1]"
+	}, {
+		"id": 2,
+		"input": "[3,2,4] target=6",
+		"output": "[1,2]"
+	}, {
+		"id": 3,
+		"input": "[3,3] target=6",
+		"output": "[0,1]"
+	}],
+	"problemSubmissionsId":[12]
+
+},
+{
+	"problemId": 58,
+	"problemName": "Length of Last Word",
+	"numberOfSubmissions": 1,
+	"writerId": 789,
+	"description": "Given a string s consisting of some words separated by some number of spaces, return the length of the last word in the string. A word is a maximal substring consisting of non-space characters only.",
+	"timeLimit": "200 ms",
+	"memoryLimit": "1000 KB",
+	"Difficulty": "Easy",
+	"testcases": [{
+		"id": 1,
+		"input": "Hello World",
+		"output": 5
+	}, {
+		"id": 2,
+		"input": "fly me   to   the moon  ",
+		"output": 4
+	}, {
+		"id": 3,
+		"input": "luffy is still joyboy",
+		"output": 6
+	},
+	{
+		"id": 4,
+		"input": "abcd jkl",
+		"output": 3
+	},
+	{
+		"id": 4,
+		"input": "go to college",
+		"output": 7
+	}],
+	"problemSubmissionsId":[34]
+
+},
+
+{
+	"problemId": 371,
+	"problemName": "Sum of Two Integers",
+	"numberOfSubmissions": 1,
+	"writerId": 789,
+	"description": "Given two integers a and b, return the sum of the two integers without using the operators + and -.",
+	"timeLimit": "200 ms",
+	"memoryLimit": "1000 KB",
+	"Difficulty": "Medium",
+	"testcases": [{
+		"id": 1,
+		"input": "a = 1, b = 2",
+		"output": 3
+	}, {
+		"id": 2,
+		"input": "a = 2, b = 3",
+		"output": 5
+	}, {
+		"id": 3,
+		"input": "a = 1, b = 1",
+		"output": 2
+	},{
+		"id": 4,
+		"input": "a = 6, b = 1",
+		"output": 7
+	},{
+		"id": 5,
+		"input": "a = 3, b = 4",
+		"output": 7
+	}
+],
+	"problemSubmissionsId":[]
+
+},
+{
+	"problemId": 363,
+	"problemName": "Reverse string",
+	"numberOfSubmissions": 1,
+	"writerId": 789,
+	"description": "Write a function that reverses a string. The input string is given as an array of characters s.\nYou must do this by modifying the input array in-place with O(1) extra memory.",
+	"timeLimit": "500 ms",
+	"memoryLimit": "1000 KB",
+	"Difficulty": "Easy",
+	"testcases": [{
+		"id": 1,
+		"input": "s = [\"h\",\"e\",\"l\",\"l\",\"o\"]",
+		"output": "[\"o\",\"l\",\"l\",\"e\",\"h\"]"
+	}, {
+		"id": 2,
+		"input": "[\"H\",\"a\",\"n\",\"n\",\"a\",\"h\"]",
+		"output": "[\"h\",\"a\",\"n\",\"n\",\"a\",\"H\"]"
+	}],
+	"problemSubmissionsId":[56,78]
+
+}]
