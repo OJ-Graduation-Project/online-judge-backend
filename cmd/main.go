@@ -21,8 +21,6 @@ func main() {
 		"./config/res/.env-example",
 		"Location of the environment file",
 	)
-	
-
 
 	// config file flag
 	var configFilePath string
@@ -35,13 +33,11 @@ func main() {
 
 	flag.Parse()
 
-
 	config.LoadEnv(envFilePath)
 	config := config.LoadConfig(configFilePath)
-	
-	router:= routes.LoadRoutes()
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d",config.Server.Host, config.Server.Port), router))
+
+	router := routes.LoadRoutes()
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port), router))
 
 	_ = config // will be removed later
 }
-
