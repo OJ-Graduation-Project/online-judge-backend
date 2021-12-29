@@ -18,10 +18,15 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-	fmt.Println("HERE")
+	w.WriteHeader(http.StatusOK)
+	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	var user User
-	decoder.Decode(&user)
+	err := decoder.Decode(&user)
+	if err != nil {
+		fmt.Println("Error couldn't decode user")
+		return
+	}
 	fmt.Println(user)
-
+	//Save to database
 }
