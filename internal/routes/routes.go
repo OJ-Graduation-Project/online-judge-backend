@@ -9,7 +9,7 @@ import (
 func LoadRoutes() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/", get.Root).Methods("GET")
-	router.HandleFunc("/submit/{problemID}", post.Submit).Methods("POST")
+	router.HandleFunc("/submit", post.Submit)
 	router.HandleFunc("/sign-up", post.SignupHandler)
 	return router
 }

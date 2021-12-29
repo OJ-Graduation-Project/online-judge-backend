@@ -3,38 +3,65 @@ package post
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"strconv"
 
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/compile"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/requests"
-	"github.com/gorilla/mux"
+	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/responses"
 )
 
 func Submit(w http.ResponseWriter, r *http.Request) {
-	problemID := mux.Vars(r)["problemID"]
+
+	//Needed to bypass CORS headers
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "%s\n", problemID)
-	
+
 	defer r.Body.Close()
-	
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		fmt.Println("Error reading body from submission: ", err)
-		w.WriteHeader(http.StatusInternalServerError)
-	}
 
-	
+	decoder := json.NewDecoder(r.Body)
 	var submissionRequest requests.SubmissionRequest
-	err = json.Unmarshal(body, &submissionRequest)
+	err := decoder.Decode(&submissionRequest)
 	if err != nil {
-		fmt.Println("Error unmarshalling body from submission: ", err)
-		w.WriteHeader(http.StatusBadRequest)
+		fmt.Println("Error couldn't decode user")
+		return
 	}
-
-	// add submission to database
-	// validate submission
-	// run submission against input and compare with output
+	//get testcases
+	testcases := fetchdummyTestCase(submissionRequest.ProblemID)
+	//submission Id needs to be different each time.
+	responses := compile.CompileAndRun(strconv.Itoa(1), testcases, submissionRequest.Code, submissionRequest.Language)
+	fmt.Println(responses)
 
 }
 
+//returns all testcases to certain Problem id.
+func fetchTestCases(problemID int) []responses.ProblemTestCases {
+	dbconn, err := db.CreateDbConn()
+	if err != nil {
+		fmt.Println("Couldn't connect to database")
+	}
+	//get problems.
+	dbconn.CloseSession()
+	return nil
+}
 
+func fetchdummyTestCase(problemID int) []responses.ProblemTestCases {
+	var testcases = []responses.ProblemTestCases{
+		{
+			ProblemId:      1,
+			TestCaseId:     1,
+			Input:          "1 2",
+			ExpectedOutput: "3",
+		},
+		{
+			ProblemId:      1,
+			TestCaseId:     1,
+			Input:          "1 3",
+			ExpectedOutput: "4",
+		},
+	}
+	return testcases
+}
