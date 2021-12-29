@@ -2,7 +2,12 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/OJ-Graduation-Project/online-judge-backend/config"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/routes"
 )
 
 func main() {
@@ -33,8 +38,10 @@ func main() {
 
 	config.LoadEnv(envFilePath)
 	config := config.LoadConfig(configFilePath)
+	
+	router:= routes.LoadRoutes()
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d",config.Server.Host, config.Server.Port), router))
 
-
-	_ = config // will be remove later
+	_ = config // will be removed later
 }
 
