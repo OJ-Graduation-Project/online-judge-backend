@@ -2,9 +2,11 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -70,4 +72,13 @@ func (dbconnection DbConnection) Query(database string, col string, filter inter
 	}
 	return result, err
 
+}
+
+func (dbconnection DbConnection) ListDatabases(ctx context.Context) ([]string, error) {
+	databases, err := dbconnection.Conn.ListDatabaseNames(ctx, bson.M{})
+	if err != nil {
+		fmt.Print("Couldn't list databases")
+		fmt.Println(err)
+	}
+	return databases, err
 }
