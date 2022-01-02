@@ -13,5 +13,9 @@ func LoadRoutes() *mux.Router {
 	router.HandleFunc("/sign-up", post.SignupHandler)
 	router.HandleFunc("/create-problem", post.CreateProblem).Methods("POST")
 	router.HandleFunc("/home", post.SearchHandler)
+
+	router.HandleFunc("/create-problem", post.CreateProblem)
+	router.HandleFunc("/create-contest", post.CreateContest)
+
 	return router
 }
