@@ -1,0 +1,62 @@
+[{
+	"submissionId": 12,
+	"submittedProblemId":1,
+	"userSubmitterId":1629,
+	"submissionDate": "17/2/2021",
+	"programmingLanguage": "java",
+	"bool": "false",
+	"failedTestCases":{
+		"id":1,
+		"reason":"Wrong Answer",
+		"userOutput":"[0,0]"
+	},
+	"time":"120 ms",
+	"space":"10 MB",
+	"submittedCode": "public int[] twoSum(int[] nums, int target) {\nHashMap<Integer,Integer>hashMap=new HashMap<>();\nint[] ret=new int[2];\nfor(int i=0;i<nums.length;i++){\nif(hashMap.containsKey(target-nums[i])){\nret[0]=i;\nret[1]=hashMap.get(target-nums[i]);\n}else hashMap.put(nums[i],i);\n}\n return ret;\n}"
+},
+{
+	"submissionId": 34,
+	"submittedProblemId":58,
+	"userSubmitterId":265,
+	"submissionDate": "1/2/2021",
+	"programmingLanguage": "java",
+	"bool": "true",
+	"failedTestCases":{	
+	},
+	"time":"220 ms",
+	"space":"1 MB",
+	"submittedCode": "public int lengthOfLastWord(String s) {\nint i=s.length()-1;\nwhile (i>=0&&s.charAt(i)==' ')\ni--;\nint x=0;\nwhile (i>=0&&s.charAt(i)!=' '){\nx++;\ni--;\n}\nreturn x;\n}"
+},
+{
+	"submissionId": 56,
+	"submittedProblemId":363,
+	"userSubmitterId":11,
+	"submissionDate": "1/2/2021",
+	"programmingLanguage": "java",
+	"bool": "false",
+	"failedTestCases":{
+		"id":1,
+		"reason":"Runtime Exception",
+		"userOutput":""
+	},
+	"time":"1 ms",
+	"space":"1 KB",
+	"submittedCode": " public void reverseString(char[] s) {\nint i=0;\nint j=s.length;\nwhile (i<j){\nswap(s,i,j);\ni++;\nj--;\n}\n}\nstatic char[]swap(char[]array,int i,int j){\nchar temp=array[i];\narray[i]=array[j];\narray[j]=temp;\nreturn array;\n}\n"
+},
+{
+	"submissionId": 78,
+	"submittedProblemId":363,
+	"userSubmitterId":11,
+	"submissionDate": "1/2/2021",
+	"programmingLanguage": "python",
+	"bool": "false",
+	"failedTestCases":{
+		"id":1,
+		"reason":"Time Limit Exceeded",
+		"userOutput":""
+	},
+	"time":"2000 ms",
+	"space":"10 MB",
+	"submittedCode": " public void reverseString() {i=0\n while(i<2)\nprint(\"string\")}\n"
+}
+]

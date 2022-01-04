@@ -4,13 +4,14 @@ import (
 	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type dummy struct {
 	name string
 }
 
-func example() {
+func Example() {
 
 	dbconnection, err := CreateDbConn()
 	defer dbconnection.Cancel()
@@ -28,6 +29,12 @@ func example() {
 	if err != nil {
 		fmt.Println("Error couldn't insert")
 	}
+
+	oid := result.InsertedID.(primitive.ObjectID)
+	slice := oid[:]
+
+	fmt.Println("Id is " + oid.Hex())
+	fmt.Println(slice)
 
 	cur, errr := dbconnection.Query("example_database", "mycollection", bson.D{}, bson.D{})
 	if errr != nil {
