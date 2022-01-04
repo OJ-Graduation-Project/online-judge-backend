@@ -82,3 +82,14 @@ func (dbconnection DbConnection) ListDatabases(ctx context.Context) ([]string, e
 	}
 	return databases, err
 }
+
+func (dbconnection DbConnection) UpdateOne(database string, col string, query interface{}, update interface{}) {
+	collection := dbconnection.Conn.Database(database).Collection(col)
+	result, err := collection.UpdateOne(dbconnection.Ctx,query, update)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Print(result)
+
+}
+
