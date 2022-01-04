@@ -62,8 +62,13 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	query1:=bson.M{"contestName": register.ContestName}
 	integerUserId, _ := strconv.Atoi(register.UserId)
 	query2:=bson.M{"userId": integerUserId}
+<<<<<<< HEAD
 	_=QueryToCheckResults(dbconnection,CONTEST_COLLECTION,query1)
 	_=QueryToCheckResults(dbconnection,USER_COLLECTION,query2)
+=======
+	QueryToCheckResults(dbconnection,CONTEST_COLLECTION,query1)
+	QueryToCheckResults(dbconnection,USER_COLLECTION,query2)
+>>>>>>> a5d2806599e603554e8f238b5d1cc698740376fb
 
 
 }
