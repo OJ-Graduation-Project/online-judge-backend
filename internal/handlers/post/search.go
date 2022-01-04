@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/requests"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"go.mongodb.org/mongo-driver/bson"
-    "go.mongodb.org/mongo-driver/mongo/options"
+	"log"
+
 )
+const PROBLEMS_COLLECTION="problem"
 
 type Search struct {
 	SearchValue string `json:"searchValue"`
@@ -22,41 +23,35 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
-	var searchRequest requests.SearchRequest
+	var searchRequest Search
 	err := decoder.Decode(&searchRequest)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-
-	queryDB(searchRequest)
-
-}
-
-func queryDB(searchRequest requests.SearchRequest){
-
-
 	dbconnection, err := db.CreateDbConn()
+	defer dbconnection.Cancel()
 	if err != nil {
-		fmt.Println("Couldn't connect to database")
+		fmt.Println("Error in DB")
+		log.Fatal(err)
+		return
 	}
-	findOptions := options.Find()
-	findOptions.SetLimit(2)
-	//get problems.
-	cur, err := dbconnection.Query("example_database", "mycollection", bson.D{{Key:"problemName", Value:searchRequest.SearchValue}},findOptions)
-	defer cur.Close(dbconnection.Ctx)
-
-	for cur.Next(dbconnection.Ctx) {
-		var resultdata bson.D
-		err := cur.Decode(&resultdata)
-		if err != nil {
-
-		}
-		// do something with result....
-		fmt.Println("result : " )
-		fmt.Println(resultdata)
+	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
+	if err != nil {
+		fmt.Println("Error in PING")
+		log.Fatal(err)
+		return
 	}
 
-	fmt.Println("Success")
-	dbconnection.CloseSession()
+	query1:=bson.M{"problemName": searchRequest.SearchValue}
+	desiredProblem:=QueryToCheckResults(dbconnection,PROBLEMS_COLLECTION,query1)
+
+	fmt.Println("desired problem ",desiredProblem[0])
+
+	json.NewEncoder(w).Encode(&desiredProblem[0])
+
 }
+
+
+
+
