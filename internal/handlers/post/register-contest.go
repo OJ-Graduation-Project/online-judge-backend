@@ -62,6 +62,8 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	query1:=bson.M{"contestName": register.ContestName}
 	integerUserId, _ := strconv.Atoi(register.UserId)
 	query2:=bson.M{"userId": integerUserId}
+	_=QueryToCheckResults(dbconnection,CONTEST_COLLECTION,query1)
+	_=QueryToCheckResults(dbconnection,USER_COLLECTION,query2)
 	QueryToCheckResults(dbconnection,CONTEST_COLLECTION,query1)
 	QueryToCheckResults(dbconnection,USER_COLLECTION,query2)
 
@@ -113,7 +115,7 @@ func UpdateUserWithNewContest(dbconnection db.DbConnection,returnedContest []bso
 }
 
 
-func QueryToCheckResults(dbconnection db.DbConnection,col string,filter bson.M){
+func QueryToCheckResults(dbconnection db.DbConnection,col string,filter bson.M)([]bson.M){
 	filterCursor, err := dbconnection.Query(DBNAME, col, filter, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
@@ -127,8 +129,8 @@ func QueryToCheckResults(dbconnection db.DbConnection,col string,filter bson.M){
 	}
 	if len(returnValue) == 0 {
 		fmt.Println("CURSOR IS EMPTY")
-		return
 	}
 	fmt.Println("FOUND IN DB ", returnValue[0])
+	return returnValue
 }
 
