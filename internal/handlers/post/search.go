@@ -3,20 +3,21 @@ package post
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"go.mongodb.org/mongo-driver/bson"
-	"log"
-
 )
-const PROBLEMS_COLLECTION="problem"
+
+const PROBLEMS_COLLECTION = "problems"
 
 type Search struct {
 	SearchValue string `json:"searchValue"`
 }
 
-func SearchHandler(w http.ResponseWriter, r *http.Request) {
-	
+func GetProblems(w http.ResponseWriter, r *http.Request) {
+
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
@@ -43,15 +44,10 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query1:=bson.M{"problemName": searchRequest.SearchValue}
-	desiredProblem:=QueryToCheckResults(dbconnection,PROBLEMS_COLLECTION,query1)
+	query := bson.M{"problemName": bson.M{"$regex": searchRequest.SearchValue, "$options": "i"}}
 
-	fmt.Println("desired problem ",desiredProblem[0])
+	desiredProblems := QueryToCheckResults(dbconnection, PROBLEMS_COLLECTION, query)
 
-	json.NewEncoder(w).Encode(&desiredProblem[0])
+	json.NewEncoder(w).Encode(&desiredProblems)
 
 }
-
-
-
-
