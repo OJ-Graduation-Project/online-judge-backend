@@ -3,21 +3,22 @@ package post
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"github.com/gorilla/mux"
-	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
-	"go.mongodb.org/mongo-driver/bson"
 	"log"
+	"net/http"
 	"strconv"
+
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-const DBNAME="example_database"
-const CONTEST_COLLECTION="contests"
-const USER_COLLECTION="user"
+const DBNAME = "OJ_DB"
+const CONTEST_COLLECTION = "contests"
+const USER_COLLECTION = "user"
 
 type Register struct {
-	UserId    string    `json:"userId,omitempty"`
-	ContestName string  `json:"contestName,omitempty"`
+	UserId      string `json:"userId,omitempty"`
+	ContestName string `json:"contestName,omitempty"`
 }
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -52,29 +53,25 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	returnedContest:=FindContestByName(dbconnection,register)
+	returnedContest := FindContestByName(dbconnection, register)
 	fmt.Println("FOUND IN DB ", returnedContest[0])
 
-	UpdateContestWithNewUser(dbconnection,returnedContest,register)
-	UpdateUserWithNewContest(dbconnection,returnedContest,register)
+	UpdateContestWithNewUser(dbconnection, returnedContest, register)
+	UpdateUserWithNewContest(dbconnection, returnedContest, register)
 
 	//To check results are saved successfully in db
-	query1:=bson.M{"contestName": register.ContestName}
+	query1 := bson.M{"contestName": register.ContestName}
 	integerUserId, _ := strconv.Atoi(register.UserId)
-	query2:=bson.M{"userId": integerUserId}
-	_=QueryToCheckResults(dbconnection,CONTEST_COLLECTION,query1)
-	_=QueryToCheckResults(dbconnection,USER_COLLECTION,query2)
-	QueryToCheckResults(dbconnection,CONTEST_COLLECTION,query1)
-	QueryToCheckResults(dbconnection,USER_COLLECTION,query2)
-
+	query2 := bson.M{"userId": integerUserId}
+	_ = QueryToCheckResults(dbconnection, CONTEST_COLLECTION, query1)
+	_ = QueryToCheckResults(dbconnection, USER_COLLECTION, query2)
+	QueryToCheckResults(dbconnection, CONTEST_COLLECTION, query1)
+	QueryToCheckResults(dbconnection, USER_COLLECTION, query2)
 
 }
 
-
-
-
 //Find contest which matches certain contestName from db.
-func FindContestByName(dbconnection db.DbConnection,register Register)([]bson.M ){
+func FindContestByName(dbconnection db.DbConnection, register Register) []bson.M {
 
 	filterCursor, err := dbconnection.Query(DBNAME, CONTEST_COLLECTION, bson.M{"contestName": register.ContestName}, bson.M{})
 	if err != nil {
@@ -93,29 +90,27 @@ func FindContestByName(dbconnection db.DbConnection,register Register)([]bson.M 
 	return returnedContest
 }
 
-
 //Insert new userid in the matched contest.
-func UpdateContestWithNewUser(dbconnection db.DbConnection,returnedContest []bson.M, register Register){
-	
+func UpdateContestWithNewUser(dbconnection db.DbConnection, returnedContest []bson.M, register Register) {
+
 	objId := returnedContest[0]["_id"]
 	query := bson.M{"_id": bson.M{"$eq": objId}}
-	update := bson.M{"$push": bson.M{"registeredUsersId":register.UserId}}
+	update := bson.M{"$push": bson.M{"registeredUsersId": register.UserId}}
 
 	dbconnection.UpdateOne(DBNAME, CONTEST_COLLECTION, query, update)
 }
 
 //Inset contestid in user's registered contests.
-func UpdateUserWithNewContest(dbconnection db.DbConnection,returnedContest []bson.M, register Register){
-	
+func UpdateUserWithNewContest(dbconnection db.DbConnection, returnedContest []bson.M, register Register) {
+
 	integerUserId, _ := strconv.Atoi(register.UserId)
 	query := bson.M{"userId": bson.M{"$eq": integerUserId}}
-	update := bson.M{"$push": bson.M{"userContestsId":returnedContest[0]["_id"]}}
+	update := bson.M{"$push": bson.M{"userContestsId": returnedContest[0]["_id"]}}
 
 	dbconnection.UpdateOne(DBNAME, USER_COLLECTION, query, update)
 }
 
-
-func QueryToCheckResults(dbconnection db.DbConnection,col string,filter bson.M)([]bson.M){
+func QueryToCheckResults(dbconnection db.DbConnection, col string, filter bson.M) []bson.M {
 	filterCursor, err := dbconnection.Query(DBNAME, col, filter, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
@@ -130,7 +125,5 @@ func QueryToCheckResults(dbconnection db.DbConnection,col string,filter bson.M)(
 	if len(returnValue) == 0 {
 		fmt.Println("CURSOR IS EMPTY")
 	}
-	fmt.Println("FOUND IN DB ", returnValue[0])
 	return returnValue
 }
-
