@@ -1,12 +1,17 @@
 [{
 	"submissionId": 12,
-	"submittedProblemId":1,
-	"userSubmitterId":1629,
-	"submissionDate": "17/2/2021",
-	"programmingLanguage": "java",
-	"bool": "false",
-	"failedTestCases":{
-		"id":1,
+	"problemId":1,
+	"userId":1629,
+	"date": "17/2/2021",
+	"language": "java",
+	"accepted": "false",
+	"failedTestCase":{
+		"testCase":{
+			"problemId": 1,
+			"testCaseNumber": 1,
+			"input": "[0,1,2,3,4,5,6]",
+			"output": "[2,3]"
+		},
 		"reason":"Wrong Answer",
 		"userOutput":"[0,0]"
 	},
@@ -16,12 +21,12 @@
 },
 {
 	"submissionId": 34,
-	"submittedProblemId":58,
-	"userSubmitterId":265,
-	"submissionDate": "1/2/2021",
-	"programmingLanguage": "java",
-	"bool": "true",
-	"failedTestCases":{	
+	"problemId":58,
+	"userId":265,
+	"date": "1/2/2021",
+	"language": "java",
+	"accepted": "true",
+	"failedTestCase":{	
 	},
 	"time":"220 ms",
 	"space":"1 MB",
@@ -29,13 +34,18 @@
 },
 {
 	"submissionId": 56,
-	"submittedProblemId":363,
-	"userSubmitterId":11,
-	"submissionDate": "1/2/2021",
-	"programmingLanguage": "java",
-	"bool": "false",
-	"failedTestCases":{
-		"id":1,
+	"problemId":363,
+	"userId":11,
+	"date": "1/2/2021",
+	"language": "java",
+	"accepted": "false",
+	"failedTestCase":{
+		"testCase":{
+			"problemId": 363,
+			"testCaseNumber": 1,
+			"input": "[0,1,2,3,4,5,6]",
+			"output": "[2,3]"
+		},
 		"reason":"Runtime Exception",
 		"userOutput":""
 	},
@@ -45,13 +55,18 @@
 },
 {
 	"submissionId": 78,
-	"submittedProblemId":363,
-	"userSubmitterId":11,
-	"submissionDate": "1/2/2021",
-	"programmingLanguage": "python",
-	"bool": "false",
-	"failedTestCases":{
-		"id":1,
+	"problemId":363,
+	"userId":11,
+	"date": "1/2/2021",
+	"language": "python",
+	"accepted": "false",
+	"failedTestCase":{
+		"testCase":{
+			"problemId": 363,
+			"testCaseNumber": 1,
+			"input": "[0,1,2,3,4,5,6]",
+			"output": "[2,3]"
+		},
 		"reason":"Time Limit Exceeded",
 		"userOutput":""
 	},
