@@ -58,6 +58,6 @@ func ProblemHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("CURSOR IS EMPTY")
 		return
 	}
-	fmt.Println("FOUND IN DB ", returnedProblem[0])
+	// fmt.Println("FOUND IN DB ", returnedProblem[0])
 	json.NewEncoder(w).Encode(&returnedProblem[0])
 }

@@ -10,8 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const PROBLEMS_COLLECTION = "problems"
-
 type Search struct {
 	SearchValue string `json:"searchValue"`
 }
@@ -46,7 +44,7 @@ func GetProblems(w http.ResponseWriter, r *http.Request) {
 
 	query := bson.M{"problemName": bson.M{"$regex": searchRequest.SearchValue, "$options": "i"}}
 
-	desiredProblems := QueryToCheckResults(dbconnection, PROBLEMS_COLLECTION, query)
+	desiredProblems := QueryToCheckResults(dbconnection, db.PROBLEMS_COLLECTION, query)
 
 	json.NewEncoder(w).Encode(&desiredProblems)
 

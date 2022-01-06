@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/responses"
+	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/entities"
 )
 
 func compile(code string, submissionId string) error {
@@ -44,21 +44,20 @@ func compile(code string, submissionId string) error {
 	return nil
 }
 
-func CompileAndRun(submissionId string, problemtestcases []responses.ProblemTestCases, code string, langugage string) responses.SubmissionResponse {
+// returns (verdict, failed test case number, user output)
+func CompileAndRun(submissionId string, problemtestcases []entities.TestCase, code string, language string) (string, int, string) {
 
 	CompileError := compile(code, submissionId)
-	var response responses.SubmissionResponse
 
 	if CompileError != nil {
-		response.Verdict = "Compilation Error"
-		return response
+		return "Compilation Error", -1, ""
 	}
 
-	failed := false
+	// failed := false
 	for i, v := range problemtestcases {
-		if failed == true {
-			break
-		}
+		// if failed == true {
+		// 	break
+		// }
 		//Problems with path will arise.
 		cmd := exec.Command("./" + submissionId + ".out")
 
@@ -75,18 +74,11 @@ func CompileAndRun(submissionId string, problemtestcases []responses.ProblemTest
 		output := out.String()
 		output = output[:len(output)-1]
 
-		if output != v.ExpectedOutput {
-
-			response.Verdict = "Wrong"
-			response.WrongTestCase = i
-			failed = true
+		if output != v.Output {
+			return "Wrong Answer", i, output
 		}
 
 	}
-	if failed == false {
-		response.Verdict = "Correct"
-
-	}
-	return response
+	return "Correct", -1, ""
 
 }

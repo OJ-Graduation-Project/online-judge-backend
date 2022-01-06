@@ -6,19 +6,22 @@
 	"description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\nYou can return the answer in any order.",
 	"timeLimit": "200 ms",
 	"memoryLimit": "1000 KB",
-	"Difficulty": "Easy",
+	"difficulty": "Easy",
 	"testcases": [{
-		"id": 1,
-		"input": "[2,7,11,15] target=9",
-		"output": "[0,1]"
+		"problemId":1,
+		"testCaseNumber": 1,
+		"input": "4 \n 2 7 11 15 \n 9",
+		"output": "0 1"
 	}, {
-		"id": 2,
-		"input": "[3,2,4] target=6",
-		"output": "[1,2]"
+		"problemId":1,
+		"testCaseNumber": 2,
+		"input": "3\n3 2 4\n6",
+		"output": "1 2"
 	}, {
-		"id": 3,
-		"input": "[3,3] target=6",
-		"output": "[0,1]"
+		"problemId":1,
+		"testCaseNumber": 3,
+		"input": "2\n3 3\n6",
+		"output": "0 1"
 	}],
 	"problemSubmissionsId":[12]
 
@@ -31,29 +34,34 @@
 	"description": "Given a string s consisting of some words separated by some number of spaces, return the length of the last word in the string. A word is a maximal substring consisting of non-space characters only.",
 	"timeLimit": "200 ms",
 	"memoryLimit": "1000 KB",
-	"Difficulty": "Easy",
+	"difficulty": "Easy",
 	"testcases": [{
-		"id": 1,
+		"problemId":58,
+		"testCaseNumber": 1,
 		"input": "Hello World",
-		"output": 5
+		"output": "5"
 	}, {
-		"id": 2,
+		"problemId":58,
+		"testCaseNumber": 2,
 		"input": "fly me   to   the moon  ",
-		"output": 4
+		"output": "4"
 	}, {
-		"id": 3,
+		"problemId":58,
+		"testCaseNumber": 3,
 		"input": "luffy is still joyboy",
-		"output": 6
+		"output": "6"
 	},
 	{
-		"id": 4,
+		"problemId":58,
+		"testCaseNumber": 4,
 		"input": "abcd jkl",
-		"output": 3
+		"output": "3"
 	},
 	{
-		"id": 4,
+		"problemId":58,
+		"testCaseNumber": 5,
 		"input": "go to college",
-		"output": 7
+		"output": "7"
 	}],
 	"problemSubmissionsId":[34]
 
@@ -67,27 +75,32 @@
 	"description": "Given two integers a and b, return the sum of the two integers without using the operators + and -.",
 	"timeLimit": "200 ms",
 	"memoryLimit": "1000 KB",
-	"Difficulty": "Medium",
+	"difficulty": "Medium",
 	"testcases": [{
-		"id": 1,
-		"input": "a = 1, b = 2",
-		"output": 3
+		"problemId":371,
+		"testCaseNumber": 1,
+		"input": "1 2",
+		"output": "3"
 	}, {
-		"id": 2,
-		"input": "a = 2, b = 3",
-		"output": 5
+		"problemId":371,
+		"testCaseNumber": 2,
+		"input": "2 3",
+		"output": "5"
 	}, {
-		"id": 3,
-		"input": "a = 1, b = 1",
-		"output": 2
+		"problemId":371,
+		"testCaseNumber": 3,
+		"input": "1 1",
+		"output": "2"
 	},{
-		"id": 4,
-		"input": "a = 6, b = 1",
-		"output": 7
+		"problemId":371,
+		"testCaseNumber": 4,
+		"input": "6 1",
+		"output": "7"
 	},{
-		"id": 5,
-		"input": "a = 3, b = 4",
-		"output": 7
+		"problemId":371,
+		"testCaseNumber": 5,
+		"input": "3 4",
+		"output": "7"
 	}
 ],
 	"problemSubmissionsId":[]
@@ -101,15 +114,17 @@
 	"description": "Write a function that reverses a string. The input string is given as an array of characters s.\nYou must do this by modifying the input array in-place with O(1) extra memory.",
 	"timeLimit": "500 ms",
 	"memoryLimit": "1000 KB",
-	"Difficulty": "Easy",
+	"difficulty": "Easy",
 	"testcases": [{
-		"id": 1,
-		"input": "s = [\"h\",\"e\",\"l\",\"l\",\"o\"]",
-		"output": "[\"o\",\"l\",\"l\",\"e\",\"h\"]"
+		"problemId":363,
+		"testCaseNumber": 1,
+		"input": "hello",
+		"output": "olleh"
 	}, {
-		"id": 2,
-		"input": "[\"H\",\"a\",\"n\",\"n\",\"a\",\"h\"]",
-		"output": "[\"h\",\"a\",\"n\",\"n\",\"a\",\"H\"]"
+		"problemId":363,
+		"testCaseNumber": 2,
+		"input": "Hannah",
+		"output": "hannaH"
 	}],
 	"problemSubmissionsId":[56,78]
 

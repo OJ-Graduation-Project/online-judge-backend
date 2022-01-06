@@ -6,4 +6,5 @@ type SubmissionRequest struct {
 	Language     string `json:"language,omitempty"`
 	Code         string `json:"code,omitempty"`
 	SubmissionID int    `json:"submissionId,omitempty"`
+	Date         string `json:"date,omitempty"`
 }
