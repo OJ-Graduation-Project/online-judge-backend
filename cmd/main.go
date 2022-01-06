@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/config"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/routes"
 )
 
@@ -35,6 +36,9 @@ func main() {
 
 	config.LoadEnv(envFilePath)
 	config := config.LoadConfig(configFilePath)
+	//Test contest and test submissions.
+	all := contest.GetInstance()
+	all.GetContestAndStart(1)
 
 	router := routes.LoadRoutes()
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port), router))
