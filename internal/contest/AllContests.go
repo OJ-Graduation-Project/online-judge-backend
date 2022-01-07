@@ -67,7 +67,7 @@ func (all AllCont) GetContestAndStart(contestid int) {
 	bsonBytes, _ := bson.Marshal(contests[0])
 	bson.Unmarshal(bsonBytes, &ctstData)
 
-	ctstData.Start()
+	ctstData.Start("fast")
 	instantiated.AddContest(&ctstData)
 
 	//Mock submissions

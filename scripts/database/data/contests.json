@@ -6,12 +6,12 @@
         "startTime": "16:20 UTC",
         "duration": "120 minutes",
         "numberOfRegisteredUsers": 3,
-        "contestProblemIds": [
+        "contestProblemId": [
             371,
             1,
             58
         ],
-        "registeredUserIds": [
+        "registeredUserId": [
             1629,
             265,
             11

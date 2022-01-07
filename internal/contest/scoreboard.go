@@ -21,7 +21,7 @@ func ReverseOrder(a, b interface{}) int {
 	return utils.IntComparator(b, a)
 }
 
-func New() *ScoreBoard {
+func NewFastScoreBoard() *ScoreBoard {
 	return &ScoreBoard{
 		treemap.NewWith(ReverseOrder),
 		hashmap.New(),
@@ -29,14 +29,14 @@ func New() *ScoreBoard {
 		*fenwick.New(10000)}
 }
 
-func (s *ScoreBoard) AddProblemScore(user, problemIndex int) {
-	z0, _ := s.UserMaxProblemsScore.Get(user)
+func (s *ScoreBoard) AddProblemScore(userId, problemIndex int) {
+	z0, _ := s.UserMaxProblemsScore.Get(userId)
 	problemScores := z0.([]int)
 
 	increase_in_score := problemScores[problemIndex]
 	problemScores[problemIndex] = 0
 
-	z1, _ := s.UserToScore.Get(user)
+	z1, _ := s.UserToScore.Get(userId)
 	cur_score := z1.(int)
 
 	s.F.Update(cur_score, -1)
@@ -44,7 +44,7 @@ func (s *ScoreBoard) AddProblemScore(user, problemIndex int) {
 	z2, _ := s.ScoreToUser.Get(cur_score)
 	cur_score_set := z2.(*treeset.Set)
 
-	cur_score_set.Remove(user)
+	cur_score_set.Remove(userId)
 	if cur_score_set.Empty() {
 		s.ScoreToUser.Remove(cur_score)
 	}
@@ -59,14 +59,14 @@ func (s *ScoreBoard) AddProblemScore(user, problemIndex int) {
 	z3, _ := s.ScoreToUser.Get(cur_score)
 	user_set := z3.(*treeset.Set)
 
-	user_set.Add(user)
+	user_set.Add(userId)
 	s.F.Update(cur_score, 1)
-	s.UserToScore.Put(user, cur_score)
+	s.UserToScore.Put(userId, cur_score)
 }
 
-func (s *ScoreBoard) Initialize(l, problemsScore []int) {
+func (s *ScoreBoard) Initialize(userIds, problemsScore []int) {
 	user_set := treeset.NewWithIntComparator()
-	for _, x := range l {
+	for _, x := range userIds {
 		tmp := make([]int, len(problemsScore))
 		copy(tmp, problemsScore)
 		s.UserMaxProblemsScore.Put(x, tmp)
@@ -74,22 +74,22 @@ func (s *ScoreBoard) Initialize(l, problemsScore []int) {
 		user_set.Add(x)
 	}
 	s.ScoreToUser.Put(0, user_set)
-	s.F.Update(0, len(l))
+	s.F.Update(0, len(userIds))
 }
 
-func (s *ScoreBoard) DecreaseProblemScore(user, problemIndex, value int) {
-	x, _ := s.UserMaxProblemsScore.Get(user)
+func (s *ScoreBoard) DecreaseProblemScore(userId, problemIndex, value int) {
+	x, _ := s.UserMaxProblemsScore.Get(userId)
 	y := x.([]int)
 	y[problemIndex] -= value
 	y[problemIndex] = math.Max(y[problemIndex], 0)
 }
 
-func (s *ScoreBoard) Get(start_index, count int) pair.PairList {
+func (s *ScoreBoard) Get(startIndex, count int) pair.PairList {
 
 	a := make(pair.PairList, 0)
 
-	cur := start_index
-	end := start_index + count - 1
+	cur := startIndex
+	end := startIndex + count - 1
 	size := s.UserToScore.Size()
 
 	first := true
@@ -122,4 +122,8 @@ func (s *ScoreBoard) Get(start_index, count int) pair.PairList {
 	}
 
 	return a
+}
+
+func (s *ScoreBoard) Count() int {
+	return s.UserToScore.Size()
 }

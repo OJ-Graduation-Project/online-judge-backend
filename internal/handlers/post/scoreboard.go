@@ -41,7 +41,7 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	ctst := contest.GetInstance().GetContest(scorereq.ContestID)
 
-	ans := ctst.GetRanks(1, ctst.Board.UserToScore.Size())
+	ans := ctst.GetRanks(1, ctst.Board.Count())
 	mp := make(map[int]int)
 
 	dbconnection, err := db.CreateDbConn()
