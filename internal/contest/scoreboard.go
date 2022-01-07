@@ -26,7 +26,8 @@ func NewFastScoreBoard() *ScoreBoard {
 		treemap.NewWith(ReverseOrder),
 		hashmap.New(),
 		hashmap.New(),
-		*fenwick.New(10000)}
+		*fenwick.New(1000000)}
+	// TODO: make sure the maximum score doesn't exceed 100000
 }
 
 func (s *ScoreBoard) AddProblemScore(userId, problemIndex int) {
