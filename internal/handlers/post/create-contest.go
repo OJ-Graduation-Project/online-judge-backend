@@ -7,7 +7,6 @@ import (
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Contest struct {
@@ -51,6 +50,6 @@ func CreateContest(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error couldn't insert")
 	}
 	fmt.Println(result.InsertedID)
-	contest.ID = result.InsertedID.(primitive.ObjectID).Hex()
+	// contest.ID = result.InsertedID.(primitive.ObjectID).Hex()
 	json.NewEncoder(w).Encode(&contest)
 }
