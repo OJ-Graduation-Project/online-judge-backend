@@ -6,9 +6,9 @@ const (
 )
 
 func NewScoreBoard(s string) ScoreBoardInterface {
-	if s == SLOW {
+	if s == FAST {
 		return NewFastScoreBoard()
-	} else if s == FAST {
+	} else if s == SLOW {
 		return NewSlowScoreBoard()
 	}
 	return nil
