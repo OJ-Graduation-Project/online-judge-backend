@@ -16,22 +16,23 @@ type Contest struct {
 	StartTime               string    `json:"startTime,omitempty"`
 	Duration                string    `json:"duration,omitempty"`
 	NumberOfRegisteredUsers int       `json:"numberOfRegisteredUsers,omitempty"`
-	ContestProblemIds       []int     `json:"contestProblemsId,omitempty"`
-	RegisteredUserIds       []int     `json:"registeredUsersId,omitempty"`
+	ContestProblemIds       []int     `json:"contestProblemId,omitempty"`
+	RegisteredUserIds       []int     `json:"registeredUserId,omitempty"`
 	ProblemsScore           []int     `json:"problemsScore,omitempty"`
 	WrongSubmissionCost     int       `json:"wrongSubmissionCost,omitempty"`
-	Board                   *ScoreBoard
+	Board                   ScoreBoardInterface
 	ProblemIdToIndex        *hashmap.Map
 }
 
-func (c *Contest) Start() {
+func (c *Contest) Start(scoreBoardType string) {
+
 	c.ProblemIdToIndex = hashmap.New()
 
 	for i, v := range c.ContestProblemIds {
 		c.ProblemIdToIndex.Put(v, i)
 	}
 
-	c.Board = New()
+	c.Board = NewScoreBoard(scoreBoardType)
 	c.Board.Initialize(c.RegisteredUserIds, c.ProblemsScore)
 }
 
@@ -62,9 +63,9 @@ func (c *Contest) DisplayRanks(start, count int) string {
 }
 
 func (c *Contest) GetAllRanks() pair.PairList {
-	return c.GetRanks(1, c.Board.UserToScore.Size())
+	return c.GetRanks(1, c.Board.Count())
 }
 
 func (c *Contest) DisplayAllRanks() string {
-	return c.DisplayRanks(1, c.Board.UserToScore.Size())
+	return c.DisplayRanks(1, c.Board.Count())
 }
