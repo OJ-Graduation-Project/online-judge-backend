@@ -99,8 +99,8 @@ func TestCorrectness(t *testing.T) {
 			fast.AcceptedSubmission(userId, problemId)
 
 		case 1:
-			fast.WrongSubmission(userId, problemId)
 			slow.WrongSubmission(userId, problemId)
+			fast.WrongSubmission(userId, problemId)
 		}
 
 		if slow.DisplayAllRanks() != fast.DisplayAllRanks() {
