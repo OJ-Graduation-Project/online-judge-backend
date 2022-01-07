@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -45,7 +46,7 @@ func CreateContest(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error in PING")
 		return
 	}
-	result, err := dbconnection.InsertOne("OJ_DB", "contests", contest)
+	result, err := dbconnection.InsertOne(util.DB_NAME, util.CONTESTS_COLLECTION, contest)
 	if err != nil {
 		fmt.Println("Error couldn't insert")
 	}

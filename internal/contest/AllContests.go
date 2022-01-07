@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -46,7 +47,7 @@ func (all AllCont) GetContestAndStart(contestid int) {
 	if err != nil {
 		fmt.Println("Error couldn't connect to database")
 	}
-	cursor, err := dbconnection.Query("OJ_DB", "contests", bson.M{
+	cursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{
 		"contestId": contestid,
 	}, bson.M{})
 	if err != nil {

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -24,7 +25,7 @@ func GetAllContests(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error couldn't connect to db")
 		log.Fatal(err)
 	}
-	cursor, err := dbconnection.Query("OJ_DB", "contests", bson.M{}, bson.M{})
+	cursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
 		log.Fatal(err)

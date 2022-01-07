@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -28,7 +29,7 @@ func GetContestDetails(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error couldn't connect to db")
 		log.Fatal(err)
 	}
-	cursor, err := dbconnection.Query("OJ_DB", "contests", bson.M{
+	cursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{
 		"contestId": contestid,
 	}, bson.M{})
 	if err != nil {
@@ -46,7 +47,7 @@ func GetContestDetails(w http.ResponseWriter, r *http.Request) {
 	problemids := contests[0]["contestProblemIds"]
 	fmt.Println(problemids)
 
-	cursor, err = dbconnection.Query("OJ_DB", "problems", bson.M{
+	cursor, err = dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, bson.M{
 		"problemId": bson.M{
 			"$in": problemids,
 		},
