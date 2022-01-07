@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 )
 
 type LoginUser struct {
@@ -43,7 +44,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	defer dbConnection.CloseSession()
-	cursor, err := dbConnection.Query("db", "users", loginUser, loginUser) //TODO: Insert parameters.
+	cursor, err := dbConnection.Query(util.DB_NAME, util.USERS_COLLECTION, loginUser, loginUser) //TODO: Insert parameters.
 
 	if err != nil {
 		log.Fatal(err)

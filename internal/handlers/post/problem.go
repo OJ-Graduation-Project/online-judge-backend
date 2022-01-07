@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -43,7 +44,7 @@ func ProblemHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 		return
 	}
-	filterCursor, err := dbconnection.Query("OJ_DB", "problems", bson.M{"problemName": problem.Name}, bson.M{})
+	filterCursor, err := dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, bson.M{"problemName": problem.Name}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
 		log.Fatal(err)

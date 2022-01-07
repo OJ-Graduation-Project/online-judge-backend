@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -44,7 +45,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cursor, err := dbconnection.Query("OJ_DB", "users", bson.M{"email": user.Email}, bson.M{})
+	cursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": user.Email}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
 		log.Fatal(err)
@@ -63,7 +64,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		errorUserExists = false
 		json.NewEncoder(w).Encode(&errorUserExists)
-		_, err := dbconnection.InsertOne("OJ_DB", "users", bson.D{
+		_, err := dbconnection.InsertOne(util.DB_NAME, util.USERS_COLLECTION, bson.D{
 			{Key: "firstName", Value: user.Firstname},
 			{Key: "lastName", Value: user.Lastname},
 			{Key: "registrationDate", Value: time.Now()},

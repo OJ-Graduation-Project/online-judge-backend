@@ -12,6 +12,7 @@ import (
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/compile"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/entities"
 	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/requests"
@@ -39,7 +40,7 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	// testcases := fetchdummyTestCase(submissionRequest.ProblemID)
 	dbconnection, err := db.CreateDbConn()
 
-	problem, err := FetchProblemByID(submissionRequest.ProblemID, db.DB_NAME, db.PROBLEMS_COLLECTION, dbconnection)
+	problem, err := FetchProblemByID(submissionRequest.ProblemID, util.DB_NAME, util.PROBLEMS_COLLECTION, dbconnection)
 	if err != nil {
 		fmt.Println("error in fetching the problem")
 	}
@@ -79,7 +80,7 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 		return
 	}
-	err = InsertSubmission(submission, db.DB_NAME, db.SUBMISSIONS_COLLECTION, dbconnection)
+	err = InsertSubmission(submission, util.DB_NAME, util.SUBMISSIONS_COLLECTION, dbconnection)
 	if err != nil {
 		fmt.Println("error inserting submission into database")
 	}

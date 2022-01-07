@@ -8,13 +8,10 @@ import (
 	"strconv"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 )
-
-const DBNAME = "OJ_DB"
-const CONTEST_COLLECTION = "contests"
-const USER_COLLECTION = "user"
 
 type Register struct {
 	UserId      string `json:"userId,omitempty"`
@@ -63,17 +60,17 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	query1 := bson.M{"contestName": register.ContestName}
 	integerUserId, _ := strconv.Atoi(register.UserId)
 	query2 := bson.M{"userId": integerUserId}
-	_ = QueryToCheckResults(dbconnection, CONTEST_COLLECTION, query1)
-	_ = QueryToCheckResults(dbconnection, USER_COLLECTION, query2)
-	QueryToCheckResults(dbconnection, CONTEST_COLLECTION, query1)
-	QueryToCheckResults(dbconnection, USER_COLLECTION, query2)
+	_ = QueryToCheckResults(dbconnection, util.CONTESTS_COLLECTION, query1)
+	_ = QueryToCheckResults(dbconnection, util.USERS_COLLECTION, query2)
+	QueryToCheckResults(dbconnection, util.CONTESTS_COLLECTION, query1)
+	QueryToCheckResults(dbconnection, util.USERS_COLLECTION, query2)
 
 }
 
 //Find contest which matches certain contestName from db.
 func FindContestByName(dbconnection db.DbConnection, register Register) []bson.M {
 
-	filterCursor, err := dbconnection.Query(DBNAME, CONTEST_COLLECTION, bson.M{"contestName": register.ContestName}, bson.M{})
+	filterCursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{"contestName": register.ContestName}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
 		log.Fatal(err)
@@ -97,7 +94,7 @@ func UpdateContestWithNewUser(dbconnection db.DbConnection, returnedContest []bs
 	query := bson.M{"_id": bson.M{"$eq": objId}}
 	update := bson.M{"$push": bson.M{"registeredUsersId": register.UserId}}
 
-	dbconnection.UpdateOne(DBNAME, CONTEST_COLLECTION, query, update)
+	dbconnection.UpdateOne(util.DB_NAME, util.CONTESTS_COLLECTION, query, update)
 }
 
 //Inset contestid in user's registered contests.
@@ -107,11 +104,11 @@ func UpdateUserWithNewContest(dbconnection db.DbConnection, returnedContest []bs
 	query := bson.M{"userId": bson.M{"$eq": integerUserId}}
 	update := bson.M{"$push": bson.M{"userContestsId": returnedContest[0]["_id"]}}
 
-	dbconnection.UpdateOne(DBNAME, USER_COLLECTION, query, update)
+	dbconnection.UpdateOne(util.DB_NAME, util.CONTESTS_COLLECTION, query, update)
 }
 
 func QueryToCheckResults(dbconnection db.DbConnection, col string, filter bson.M) []bson.M {
-	filterCursor, err := dbconnection.Query(DBNAME, col, filter, bson.M{})
+	filterCursor, err := dbconnection.Query(util.DB_NAME, col, filter, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
 		log.Fatal(err)

@@ -8,6 +8,7 @@ import (
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -53,7 +54,7 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 		mp[ans[i].User] = ans[i].Score
 	}
 
-	cursor, err := dbconnection.Query("OJ_DB", "users", bson.M{
+	cursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{
 		"userId": bson.M{
 			"$in": userids,
 		},

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/entities"
 )
 
@@ -40,7 +41,7 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error in PING")
 		return
 	}
-	result, err := dbconnection.InsertOne("OJ_DB", "problems", problem)
+	result, err := dbconnection.InsertOne(util.DB_NAME, util.PROBLEMS_COLLECTION, problem)
 	if err != nil {
 		fmt.Println("Error couldn't insert")
 	}

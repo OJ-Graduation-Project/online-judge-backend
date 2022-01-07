@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -44,7 +45,7 @@ func GetProblems(w http.ResponseWriter, r *http.Request) {
 
 	query := bson.M{"problemName": bson.M{"$regex": searchRequest.SearchValue, "$options": "i"}}
 
-	desiredProblems := QueryToCheckResults(dbconnection, db.PROBLEMS_COLLECTION, query)
+	desiredProblems := QueryToCheckResults(dbconnection, util.PROBLEMS_COLLECTION, query)
 
 	json.NewEncoder(w).Encode(&desiredProblems)
 
