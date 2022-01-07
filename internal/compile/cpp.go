@@ -16,17 +16,23 @@ func getCompilingCommand(language string, submissionId string) *exec.Cmd {
 		return exec.Command("g++", "-o", submissionId+".out", submissionId+".cpp")
 	case "java":
 		return exec.Command("javac", submissionId+"/Main.java")
+	case "c":
+		return exec.Command("gcc", submissionId+".c", "-o", submissionId+".out")
 	default: // newly supported languages will be inserted here
 		return nil
 	}
 }
 func getExecutionCommand(language string, submissionId string) *exec.Cmd {
+	wd, _ := os.Getwd()
 	switch language {
 	case "cpp":
 		return exec.Command("./" + submissionId + ".out")
 	case "java":
-		wd, _ := os.Getwd()
 		return exec.Command("java", wd+"/"+submissionId+"/Main.java")
+	case "python":
+		return exec.Command("python3", wd+"/"+submissionId+".py")
+	case "c":
+		return exec.Command("./" + submissionId + ".out")
 	default:
 		return nil
 	}
@@ -44,8 +50,10 @@ func createCodeFile(code string, submissionId string, language string) error {
 			fmt.Println("error in creating directory for the submission")
 		}
 		f, err = os.Create(wd + "/" + submissionId + "/Main.java")
-	// case "python":
-	// 	f, err = os.Create(wd + "/" + submissionId + ".py")
+	case "python":
+		f, err = os.Create(wd + "/" + submissionId + ".py")
+	case "c":
+		f, err = os.Create(wd + "/" + submissionId + ".c")
 	default: // newly supported languages will be inserted here
 		fmt.Println("Language is not supported")
 	}
@@ -64,12 +72,6 @@ func createCodeFile(code string, submissionId string, language string) error {
 	return nil
 }
 func compile(code string, submissionId string, language string) error {
-	err := createCodeFile(code, submissionId, language)
-
-	if err != nil {
-		fmt.Println(err)
-		return err
-	}
 
 	cmd := getCompilingCommand(language, submissionId)
 	if cmd == nil {
@@ -80,7 +82,7 @@ func compile(code string, submissionId string, language string) error {
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
 
-	err = cmd.Run()
+	err := cmd.Run()
 	if err != nil {
 		fmt.Println(cmd.Args)
 		fmt.Println("Error couldn't compile file")
@@ -96,10 +98,19 @@ func compile(code string, submissionId string, language string) error {
 
 // returns (verdict, failed test case number, user output)
 func CompileAndRun(submissionId string, problemtestcases []entities.TestCase, code string, language string) (string, int, string) {
-	CompileError := compile(code, submissionId, language)
+	err := createCodeFile(code, submissionId, language)
 
-	if CompileError != nil {
-		return "Compilation Error", 0, ""
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println("Could not parse the code into a file")
+	}
+
+	if language != "python" { // python should not compile
+		CompileError := compile(code, submissionId, language)
+
+		if CompileError != nil {
+			return "Compilation Error", 0, ""
+		}
 	}
 
 	for i, v := range problemtestcases {
