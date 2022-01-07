@@ -47,7 +47,6 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 
 	//submission Id needs to be different each time.
 	verdict, failedTestCaseNumber, userOutput := compile.CompileAndRun(strconv.Itoa(1), problem.Testcases, submissionRequest.Code, submissionRequest.Language)
-	fmt.Println(verdict, failedTestCaseNumber, userOutput)
 	var failedCase entities.FailedTestCase
 	var accepted = true
 	if verdict != "Correct" {
