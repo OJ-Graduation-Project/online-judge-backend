@@ -43,7 +43,7 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 	var problem Problem
 	err := decoder.Decode(&problem)
 	if err != nil {
-		fmt.Println("Error couldn't decode contest")
+		fmt.Println("Error couldn't decode problem")
 		fmt.Println(err)
 		return
 	}

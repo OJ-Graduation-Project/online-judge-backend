@@ -10,7 +10,7 @@ import (
 )
 
 type Contest struct {
-	ID                 string `json:"contestID"`
+	// ID                 string `json:"contestID"`
 	ContestName        string `json:"contestName"`
 	ContestStartDate   string `json:"contestStartDate"` //make date later
 	ContestEndDate     string `json:"contestEndDate"`   //make date later
