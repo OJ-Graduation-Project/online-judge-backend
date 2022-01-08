@@ -1,8 +1,6 @@
 package post
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,6 +8,8 @@ import (
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
+	"go.mongodb.org/mongo-driver/bson"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginUser struct {
@@ -18,25 +18,28 @@ type LoginUser struct {
 }
 
 func HashPassword(password string) string {
-	hash := md5.Sum([]byte(password))
-	return hex.EncodeToString(hash[:])
+	// BCRYPT HASHING
+	pwSlice, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		fmt.Println("Failed to hash the password.")
+	}
+	return string(pwSlice[:])
+
+	// MD5 HASHING
+	// hash := md5.Sum([]byte(password))
+	// return hex.EncodeToString(hash[:])
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	//Needed to bypass CORS headers
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	var loginUser LoginUser
 	err := decoder.Decode(&loginUser)
 	if err != nil {
-		fmt.Println("Error couldn't decode user")
-		return
+		panic(err)
 	}
-	loginUser.Password = HashPassword(loginUser.Password)
 	fmt.Println(loginUser)
 	dbConnection, err := db.CreateDbConn()
 	if err != nil {
@@ -44,17 +47,46 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	defer dbConnection.CloseSession()
-	cursor, err := dbConnection.Query(util.DB_NAME, util.USERS_COLLECTION, loginUser, loginUser) //TODO: Insert parameters.
+	cursor, err := dbConnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": loginUser.Email}, bson.M{})
 
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
-	if cursor.Next(dbConnection.Ctx) {
-		//login user.
-		fmt.Println("Login successfull.")
+	var returnedUser []bson.M
+	if err = cursor.All(dbConnection.Ctx, &returnedUser); err != nil {
+		fmt.Println("Error in cursor")
+		log.Fatal(err)
+	}
+	fmt.Println("SIZE OF RETURNED USER IS  ", len(returnedUser))
+	if len(returnedUser) == 1 {
+		if err := bcrypt.CompareHashAndPassword([]byte(returnedUser[0]["password"].(string)), []byte(loginUser.Password)); err == nil {
+			token := util.CreateToken(returnedUser[0]["email"].(string))
+			cookie := &http.Cookie{
+				Name:     "cookie",
+				Value:    token,
+				MaxAge:   86400 * 3, //3 days
+				Path:     "/",
+				HttpOnly: false,
+				// Secure:   true,
+			}
+			http.SetCookie(w, cookie)
+			w.Header().Set("access-control-expose-headers", "Set-Cookie")
+			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(bson.M{
+				"user":  &returnedUser[0],
+				"token": token,
+			})
+			w.WriteHeader(http.StatusOK)
+			return
+		} else {
+			json.NewEncoder(w).Encode(bson.M{"message": "incorrect password"})
+		}
 	} else {
-		//credentials not found, try again.
-		fmt.Println("Login unsuccessfull.")
+		json.NewEncoder(w).Encode(bson.M{"message": "user not found"})
 	}
 }

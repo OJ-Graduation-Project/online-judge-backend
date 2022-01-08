@@ -10,6 +10,8 @@ func LoadRoutes() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/", get.Root).Methods("GET")
 	router.HandleFunc("/submit", post.Submit)
+	router.HandleFunc("/login", post.LoginHandler)
+	router.HandleFunc("/logout", post.LogoutHandler)
 	router.HandleFunc("/sign-up", post.SignupHandler)
 	router.HandleFunc("/create-problem", post.CreateProblem).Methods("POST")
 	router.HandleFunc("/home", post.GetProblems)
