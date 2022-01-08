@@ -23,7 +23,8 @@
 		"input": "2\n3 3\n6",
 		"output": "0 1"
 	}],
-	"problemSubmissionsId":[12]
+	"problemSubmissionsId":[12],
+	"topic":["Array","Hash Table"]
 
 },
 {
@@ -63,7 +64,8 @@
 		"input": "go to college",
 		"output": "7"
 	}],
-	"problemSubmissionsId":[34]
+	"problemSubmissionsId":[34],
+	"topic":["String"]
 
 },
 
@@ -103,7 +105,9 @@
 		"output": "7"
 	}
 ],
-	"problemSubmissionsId":[]
+	"problemSubmissionsId":[],
+	"topic":["Maths"]
+
 
 },
 {
@@ -126,6 +130,7 @@
 		"input": "Hannah",
 		"output": "hannaH"
 	}],
-	"problemSubmissionsId":[56,78]
+	"problemSubmissionsId":[56,78],
+	"topic":["String","Two Pointers","Recursion"]
 
 }]
