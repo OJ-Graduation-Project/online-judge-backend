@@ -44,7 +44,7 @@ func GetContestDetails(w http.ResponseWriter, r *http.Request) {
 	if len(contests) > 1 {
 		fmt.Printf("Error more than one Contest with the same ID")
 	}
-	problemids := contests[0]["contestProblemIds"]
+	problemids := contests[0]["contestProblemId"]
 	fmt.Println(problemids)
 
 	cursor, err = dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, bson.M{
