@@ -27,7 +27,7 @@ func LoadRoutes() *mux.Router {
 	router.HandleFunc("/problem", post.ProblemHandler)
 	router.HandleFunc("/topic", post.TopicHandler)
 	router.HandleFunc("/all-contests/contest/{id:[0-9]+}/problem/{problemid:[0-9]+}", get.ProblemHandler)
-	router.HandleFunc("/profile", post.ProfileHandler).Methods("OPTIONS", "POST")
+	router.HandleFunc("/profile", post.ProfileHandler).Methods("POST")
 
 	return router
 }

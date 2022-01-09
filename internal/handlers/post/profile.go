@@ -16,12 +16,19 @@ type DisplayProfile struct {
 }
 
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
+	// fmt.Println("cookie", r.Cookies())
+
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 	w.WriteHeader(http.StatusOK)
+
 	defer r.Body.Close()
+	fmt.Println("cookie ", r.Cookies())
+
 	decoder := json.NewDecoder(r.Body)
+
 	var profile DisplayProfile
 	err := decoder.Decode(&profile)
 	if err != nil {
@@ -31,6 +38,18 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("profile", profile)
 	fmt.Println("profile.userID ", profile.UserID)
+
+	// cookie, err := r.Cookie("cookie")
+	// if err != nil {
+	// 	json.NewEncoder(w).Encode(bson.M{"message": "couldnt fetch cookie"})
+	// 	return
+	// }
+	// authEmail, err := util.AuthenticateToken(cookie.Value)
+	// if err != nil {
+	// 	json.NewEncoder(w).Encode(bson.M{"message": "unauthenticated user"})
+	// 	return
+	// }
+	// fmt.Println("COOKIE VALUE IS: ", cookie.Value, " AND EMAIL IS: ", authEmail)
 
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
