@@ -10,16 +10,16 @@ import (
 )
 
 type Contest struct {
-	ContestId               int       `json:"contestId,omitempty"`
-	ContestName             string    `json:"contestName,omitempty"`
-	StartDate               time.Time `json:"startDate,omitempty"`
-	StartTime               string    `json:"startTime,omitempty"`
-	Duration                string    `json:"duration,omitempty"`
-	NumberOfRegisteredUsers int       `json:"numberOfRegisteredUsers,omitempty"`
-	ContestProblemIds       []int     `json:"contestProblemId,omitempty"`
-	RegisteredUserIds       []int     `json:"registeredUserId,omitempty"`
-	ProblemsScore           []int     `json:"problemsScore,omitempty"`
-	WrongSubmissionCost     int       `json:"wrongSubmissionCost,omitempty"`
+	ContestId               int       `bson:"contestId,omitempty" json:"contestId,omitempty"`
+	ContestName             string    `bson:"contestName,omitempty" json:"contestName,omitempty"`
+	StartDate               time.Time `bson:"startDate,omitempty" json:"startDate,omitempty"`
+	StartTime               string    `bson:"startTime,omitempty" json:"startTime,omitempty"`
+	Duration                string    `bson:"duration,omitempty" json:"duration,omitempty"`
+	NumberOfRegisteredUsers int       `bson:"numberOfRegisteredUsers,omitempty" json:"numberOfRegisteredUsers,omitempty"`
+	ContestProblemIds       []int     `bson:"contestProblemId,omitempty" json:"contestProblemId,omitempty"`
+	RegisteredUserIds       []int     `bson:"registeredUserId,omitempty" json:"registeredUserId,omitempty"`
+	ProblemsScore           []int     `bson:"problemsScore,omitempty" json:"problemsScore,omitempty"`
+	WrongSubmissionCost     int       `bson:"wrongSubmissionCost,omitempty" json:"wrongSubmissionCost,omitempty"`
 	Board                   ScoreBoardInterface
 	ProblemIdToIndex        *hashmap.Map
 }

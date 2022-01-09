@@ -75,8 +75,8 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 	var resp ScoreResponse
 	for i := 0; i < len(users); i++ {
 		resp.Name = users[i]["firstName"].(string)
-		resp.UserId = int(users[i]["userId"].(int32))
-		resp.Score = mp[int(users[i]["userId"].(int32))]
+		resp.UserId = int(users[i]["userId"].(float64))
+		resp.Score = mp[int(users[i]["userId"].(float64))]
 		response = append(response, resp)
 	}
 

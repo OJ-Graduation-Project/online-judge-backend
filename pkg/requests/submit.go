@@ -7,4 +7,6 @@ type SubmissionRequest struct {
 	Code         string `json:"code,omitempty"`
 	SubmissionID int    `json:"submissionId,omitempty"`
 	Date         string `json:"date,omitempty"`
+	IsContest    bool   `json:"isContest,omitempty"`
+	ContestId    string `json:"contestId,omitempty"`
 }

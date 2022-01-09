@@ -10,6 +10,8 @@ func LoadRoutes() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/", get.Root).Methods("GET")
 	router.HandleFunc("/submit", post.Submit)
+	router.HandleFunc("/login", post.LoginHandler)
+	router.HandleFunc("/logout", post.LogoutHandler)
 	router.HandleFunc("/sign-up", post.SignupHandler)
 	router.HandleFunc("/home", post.GetProblems)
 	router.HandleFunc("/create-problem", post.CreateProblem)
@@ -23,7 +25,11 @@ func LoadRoutes() *mux.Router {
 	router.HandleFunc("/all-contests/Registration/contest-name={contestName}", post.RegisterHandler)
 	router.HandleFunc("/all-contests/contest/{id:[0-9]+}/scoreboard", post.ScoreBoardHandler)
 	router.HandleFunc("/problem", post.ProblemHandler)
+
 	router.HandleFunc("/profile", post.ProfileHandler).Methods("OPTIONS", "POST")
+
+	router.HandleFunc("/topic", post.TopicHandler)
+	router.HandleFunc("/all-contests/contest/{id:[0-9]+}/problem/{problemid:[0-9]+}", get.ProblemHandler)
 
 	return router
 }
