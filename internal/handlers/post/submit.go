@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/compile"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 
@@ -48,6 +49,8 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("COOKIE VALUE IS: ", cookie.Value, " AND EMAIL IS: ", authEmail)
+	userid := getIdfromEmail(authEmail)
+
 	//get testcases
 	// testcases := fetchdummyTestCase(submissionRequest.ProblemID)
 	dbconnection, err := db.CreateDbConn()
@@ -56,17 +59,24 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("error in fetching the problem")
 	}
-
+	contestid, _ := strconv.Atoi(submissionRequest.ContestId)
 	//submission Id needs to be different each time.
 	verdict, failedTestCaseNumber, userOutput := compile.CompileAndRun(strconv.Itoa(1), problem.Testcases, submissionRequest.Code, submissionRequest.Language)
 	var failedCase entities.FailedTestCase
 	var accepted = true
-	if verdict != "Correct" {
+	if verdict != "Correct" && submissionRequest.IsContest == false {
 		failedCase.TestCase = problem.Testcases[failedTestCaseNumber]
 		failedCase.Reason = verdict
 		failedCase.User_output = userOutput
 		accepted = false
+	} else if verdict != "Correct" && submissionRequest.IsContest {
+		accepted = false
+		contest.GetInstance().GetContest(contestid).WrongSubmission(userid, submissionRequest.ProblemID)
 	}
+	if verdict == "Correct" && submissionRequest.IsContest {
+		contest.GetInstance().GetContest(contestid).AcceptedSubmission(userid, submissionRequest.ProblemID)
+	}
+
 	var submission entities.Submission = entities.Submission{
 		SubmissionID:   100000, // to be changed
 		ProblemID:      submissionRequest.ProblemID,
@@ -76,8 +86,8 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 		SubmittedCode:  submissionRequest.Code,
 		Time:           "100 ms", // to be calculated
 		Space:          "100 kb", // to be calculated
-		FailedTestCase: failedCase,
 		Accepted:       accepted,
+		FailedTestCase: failedCase,
 	}
 	defer dbconnection.Cancel()
 	if err != nil {
@@ -140,6 +150,27 @@ func fetchTestCases(problemID int) []entities.TestCase {
 	//get problems.
 	dbconn.CloseSession()
 	return nil
+}
+func getIdfromEmail(authEmail string) int {
+	dbConnection, err := db.CreateDbConn()
+	if err != nil {
+		fmt.Println("Couldn't connect to database.")
+		panic(err)
+	}
+	defer dbConnection.CloseSession()
+	cursor, err := dbConnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": authEmail}, bson.M{})
+
+	if err != nil {
+		panic(err)
+	}
+
+	var returnedUser []bson.M
+	if err = cursor.All(dbConnection.Ctx, &returnedUser); err != nil {
+		fmt.Println("Error in cursor")
+		log.Fatal(err)
+	}
+	return int(returnedUser[0]["userId"].(float64))
+
 }
 
 func fetchdummyTestCase(problemID int) []entities.TestCase {
