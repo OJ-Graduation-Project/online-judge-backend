@@ -8,10 +8,17 @@
 		"groups": "beginner",
 		"numberOfSolvedProblems": 0,
 		"rating": 100,
-		"password": "password11",
+		"password": "$2a$14$dngw6tic3PBOXU.Weq9/oOtZzm0TXPYJ/xqJsfJYQ4qATm7H1M9/G",
 		"userSubmissionsId": [12],
 		"userContestsId":[900],
-		"createdProblemsId":[]
+		"createdProblemsId":[],
+		"country":"Egypt",
+		"organization":"Alexandria University",
+		"acceptedCount":100,
+		"runtimeCount":20,
+		"timelimit_exceeded_count":30,
+		"wrongCount": 50
+	
 	},
 	{
 		"firstName": "Sherif",
@@ -22,10 +29,17 @@
 		"groups": "beginner",
 		"numberOfSolvedProblems": 1,
 		"rating": 1300,
-		"password": "password22",
+		"password": "$2a$14$dngw6tic3PBOXU.Weq9/oOtZzm0TXPYJ/xqJsfJYQ4qATm7H1M9/G",
 		"userSubmissionsId": [34],
 		"userContestsId":[900],
-		"createdProblemsId":[]
+		"createdProblemsId":[],
+		"country":"Egypt",
+		"organization":"Alexandria University",
+		"acceptedCount":100,
+		"runtimeCount":20,
+		"timelimit_exceeded_count":30,
+		"wrongCount": 50
+
 	},
 	{
 		"firstName": "Sayed",

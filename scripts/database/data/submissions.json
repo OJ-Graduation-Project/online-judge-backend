@@ -4,7 +4,7 @@
 	"userId":1629,
 	"date": "17/2/2021",
 	"language": "java",
-	"accepted": "false",
+	"accepted": false,
 	"failedTestCase":{
 		"testCase":{
 			"problemId": 1,
@@ -25,7 +25,7 @@
 	"userId":265,
 	"date": "1/2/2021",
 	"language": "java",
-	"accepted": "true",
+	"accepted": true,
 	"failedTestCase":{	
 	},
 	"time":"220 ms",
@@ -38,7 +38,7 @@
 	"userId":11,
 	"date": "1/2/2021",
 	"language": "java",
-	"accepted": "false",
+	"accepted": false,
 	"failedTestCase":{
 		"testCase":{
 			"problemId": 363,
@@ -59,7 +59,7 @@
 	"userId":11,
 	"date": "1/2/2021",
 	"language": "python",
-	"accepted": "false",
+	"accepted":false,
 	"failedTestCase":{
 		"testCase":{
 			"problemId": 363,

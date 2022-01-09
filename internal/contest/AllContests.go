@@ -73,7 +73,7 @@ func (all AllCont) GetContestAndStart(contestid int) {
 	//Mock submissions
 	instantiated.AddContest(&ctstData)
 
-	ctstData.AcceptedSubmission(1629, 371)
+	//ctstData.AcceptedSubmission(1629, 371)
 	ctstData.WrongSubmission(265, 371)
 	ctstData.WrongSubmission(265, 371)
 	ctstData.WrongSubmission(265, 371)

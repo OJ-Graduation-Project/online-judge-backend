@@ -42,6 +42,7 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 	ctst := contest.GetInstance().GetContest(scorereq.ContestID)
 
 	ans := ctst.GetRanks(1, ctst.Board.Count())
+	fmt.Println(ctst.DisplayAllRanks())
 	mp := make(map[int]int)
 
 	dbconnection, err := db.CreateDbConn()
@@ -53,8 +54,26 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 		userids = append(userids, ans[i].User)
 		mp[ans[i].User] = ans[i].Score
 	}
+	var response []ScoreResponse
+	var resp ScoreResponse
 
-	cursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{
+	for i := 0; i < ans.Len(); i++ {
+		cursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{
+			"userId": ans[i].User,
+		}, bson.M{})
+		var users []bson.M
+		if err = cursor.All(dbconnection.Ctx, &users); err != nil {
+			fmt.Println("Error in cursor")
+			log.Fatal(err)
+		}
+		resp.Name = users[0]["firstName"].(string)
+		resp.UserId = int(users[0]["userId"].(float64))
+		resp.Score = ans[i].Score
+		response = append(response, resp)
+
+	}
+
+	/*cursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{
 		"userId": bson.M{
 			"$in": userids,
 		},
@@ -71,15 +90,13 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	var response []ScoreResponse
-	var resp ScoreResponse
 	for i := 0; i < len(users); i++ {
 		resp.Name = users[i]["firstName"].(string)
 		resp.UserId = int(users[i]["userId"].(float64))
 		resp.Score = mp[int(users[i]["userId"].(float64))]
 		response = append(response, resp)
 	}
-
+	*/
 	fmt.Println(response)
 
 	json.NewEncoder(w).Encode(&response)

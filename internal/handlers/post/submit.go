@@ -71,6 +71,7 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 		accepted = false
 	} else if verdict != "Correct" && submissionRequest.IsContest {
 		accepted = false
+		failedCase.Reason = verdict
 		contest.GetInstance().GetContest(contestid).WrongSubmission(userid, submissionRequest.ProblemID)
 	}
 	if verdict == "Correct" && submissionRequest.IsContest {
