@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -67,6 +68,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		_, err := dbconnection.InsertOne(util.DB_NAME, util.USERS_COLLECTION, bson.D{
 			{Key: "firstName", Value: user.Firstname},
 			{Key: "lastName", Value: user.Lastname},
+			{Key: "userId", Value: rand.Intn(1000000)},
 			{Key: "registrationDate", Value: time.Now()},
 			{Key: "email", Value: user.Email},
 			{Key: "groups", Value: "beginner"},

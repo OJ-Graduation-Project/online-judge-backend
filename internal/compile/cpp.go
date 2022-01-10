@@ -131,8 +131,9 @@ func CompileAndRun(submissionId string, problemtestcases []entities.TestCase, co
 			return "Runtime Error", i, ""
 		}
 		output := out.String()
-		output = output[:len(output)-1]
-
+		if len(output) >= 1 {
+			output = output[:len(output)-1]
+		}
 		if output != v.Output {
 			return "Wrong Answer", i, output
 		}

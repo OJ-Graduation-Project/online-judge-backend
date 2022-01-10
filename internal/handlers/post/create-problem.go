@@ -3,6 +3,7 @@ package post
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
@@ -27,6 +28,10 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
+	problem.ID = rand.Intn(100000) // to be changed
+	for i := 0; i < len(problem.Testcases); i++ {
+		problem.Testcases[i].ProblemID = problem.ID
+	}
 	fmt.Println(problem)
 	//Save to database
 
@@ -36,11 +41,11 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error in DB")
 		return
 	}
-	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
-	if err != nil {
-		fmt.Println("Error in PING")
-		return
-	}
+	// err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
+	// if err != nil {
+	// 	fmt.Println("Error in PING")
+	// 	return
+	// }
 	result, err := dbconnection.InsertOne(util.DB_NAME, util.PROBLEMS_COLLECTION, problem)
 	if err != nil {
 		fmt.Println("Error couldn't insert")
