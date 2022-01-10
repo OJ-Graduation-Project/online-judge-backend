@@ -170,7 +170,7 @@ func getIdfromEmail(authEmail string) int {
 		fmt.Println("Error in cursor")
 		log.Fatal(err)
 	}
-	return int(returnedUser[0]["userId"].(int32))
+	return int(returnedUser[0]["userId"].(float64))
 
 }
 
