@@ -1,7 +1,7 @@
 package entities
 
 type Problem struct {
-	ID                    int        `json:"problemId,omitempty" bson:"problemId,omitempty"`
+	ID                    int        `json:"problemId,omitempty" bson:"_id,omitempty"`
 	Name                  string     `json:"problemName,omitempty" bson:"problemName,omitempty"`
 	NumberOfSubmissions   int        `json:"numberOfSubmissions,omitempty" bson:"numberOfSubmissions,omitempty"`
 	WriterID              int        `json:"writerId,omitempty" bson:"writerId,omitempty"`

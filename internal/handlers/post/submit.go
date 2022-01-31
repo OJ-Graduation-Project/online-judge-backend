@@ -2,6 +2,8 @@ package post
 
 import (
 	"log"
+	"math/rand"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -77,9 +79,9 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	if verdict == "Correct" && submissionRequest.IsContest {
 		contest.GetInstance().GetContest(contestid).AcceptedSubmission(userid, submissionRequest.ProblemID)
 	}
-
+	rand.Seed(time.Now().UTC().UnixNano())
 	var submission entities.Submission = entities.Submission{
-		SubmissionID:   100000, // to be changed
+		SubmissionID:   int(rand.Int63()), // to be changed
 		ProblemID:      submissionRequest.ProblemID,
 		UserID:         submissionRequest.OwnerID,
 		Date:           submissionRequest.Date,
@@ -127,7 +129,7 @@ func InsertSubmission(sub entities.Submission, database string, col string, db d
 func FetchProblemByID(problemID int, database string, col string, db db.DbConnection) (entities.Problem, error) {
 	collection := db.Conn.Database(database).Collection(col)
 	var prob bson.D
-	err := collection.FindOne(db.Ctx, bson.M{"problemId": problemID}).Decode(&prob)
+	err := collection.FindOne(db.Ctx, bson.M{"_id": problemID}).Decode(&prob)
 
 	if err != nil {
 		fmt.Println(err)
@@ -170,7 +172,8 @@ func getIdfromEmail(authEmail string) int {
 		fmt.Println("Error in cursor")
 		log.Fatal(err)
 	}
-	return int(returnedUser[0]["userId"].(float64))
+	//fmt.Println(returnedUser[0])
+	return int(returnedUser[0]["_id"].(float64))
 
 }
 

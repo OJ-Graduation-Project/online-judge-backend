@@ -39,6 +39,7 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err.Error())
 		return
 	}
+	fmt.Printf("%+v\n", scorereq)
 	ctst := contest.GetInstance().GetContest(scorereq.ContestID)
 
 	ans := ctst.GetRanks(1, ctst.Board.Count())
@@ -59,7 +60,7 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 
 	for i := 0; i < ans.Len(); i++ {
 		cursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{
-			"userId": ans[i].User,
+			"_id": ans[i].User,
 		}, bson.M{})
 		var users []bson.M
 		if err = cursor.All(dbconnection.Ctx, &users); err != nil {
@@ -67,7 +68,7 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		resp.Name = users[0]["firstName"].(string)
-		resp.UserId = int(users[0]["userId"].(float64))
+		resp.UserId = int(users[0]["_id"].(float64))
 		resp.Score = ans[i].Score
 		response = append(response, resp)
 

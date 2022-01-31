@@ -112,7 +112,7 @@ func CompileAndRun(submissionId string, problemtestcases []entities.TestCase, co
 			return "Compilation Error", 0, ""
 		}
 	}
-
+	fmt.Printf("%+v\n", problemtestcases)
 	for i, v := range problemtestcases {
 
 		var out bytes.Buffer
@@ -131,9 +131,12 @@ func CompileAndRun(submissionId string, problemtestcases []entities.TestCase, co
 			return "Runtime Error", i, ""
 		}
 		output := out.String()
-		if len(output) >= 1 {
+
+		/*if len(output) >= 1 {
 			output = output[:len(output)-1]
-		}
+		}*/
+		fmt.Println(output, "this is the output")
+
 		if output != v.Output {
 			return "Wrong Answer", i, output
 		}

@@ -1,5 +1,5 @@
 [{
-	"problemId": 1,
+	"_id": 1,
 	"problemName": "Two Sum",
 	"numberOfSubmissions": 1,
 	"writerId": 789,
@@ -28,7 +28,7 @@
 
 },
 {
-	"problemId": 58,
+	"_id": 58,
 	"problemName": "Length of Last Word",
 	"numberOfSubmissions": 1,
 	"writerId": 789,
@@ -70,7 +70,7 @@
 },
 
 {
-	"problemId": 371,
+	"_id": 371,
 	"problemName": "Sum of Two Integers",
 	"numberOfSubmissions": 1,
 	"writerId": 789,
@@ -111,7 +111,7 @@
 
 },
 {
-	"problemId": 363,
+	"_id": 363,
 	"problemName": "Reverse string",
 	"numberOfSubmissions": 1,
 	"writerId": 789,

@@ -66,10 +66,11 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		errorUserExists = false
 		json.NewEncoder(w).Encode(&errorUserExists)
+		rand.Seed(time.Now().UTC().UnixNano())
 		_, err := dbconnection.InsertOne(util.DB_NAME, util.USERS_COLLECTION, bson.D{
 			{Key: "firstName", Value: user.Firstname},
 			{Key: "lastName", Value: user.Lastname},
-			{Key: "userId", Value: math.Floor(rand.Float64() * 100000)},
+			{Key: "_id", Value: int(math.Floor(rand.Float64() * 100000))},
 			{Key: "registrationDate", Value: time.Now()},
 			{Key: "email", Value: user.Email},
 			{Key: "groups", Value: "beginner"},
