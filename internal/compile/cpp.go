@@ -24,6 +24,7 @@ func getCompilingCommand(language string, submissionId string) *exec.Cmd {
 }
 func getExecutionCommand(language string, submissionId string) *exec.Cmd {
 	wd, _ := os.Getwd()
+	fmt.Println(wd)
 	switch language {
 	case "cpp":
 		return exec.Command("./" + submissionId + ".out")
@@ -132,9 +133,9 @@ func CompileAndRun(submissionId string, problemtestcases []entities.TestCase, co
 		}
 		output := out.String()
 
-		/*if len(output) >= 1 {
+		if output[len(output)-1] == '\n' {
 			output = output[:len(output)-1]
-		}*/
+		}
 		fmt.Println(output, "this is the output")
 
 		if output != v.Output {
