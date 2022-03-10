@@ -2,6 +2,7 @@ package contest
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -55,6 +56,7 @@ func (c *Contest) GetRanks(start, count int) pair.PairList {
 func (c *Contest) DisplayRanks(start, count int) string {
 	a := c.GetRanks(start, count)
 	var result strings.Builder
+	sort.Sort(a) // This line can be removed if we don't care about how will we break ties
 	for i, p := range a {
 		j := start + i
 		result.WriteString(fmt.Sprintf("\n%v %v %v\n", j, p.User, p.Score))
