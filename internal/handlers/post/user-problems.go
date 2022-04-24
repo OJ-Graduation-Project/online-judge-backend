@@ -68,7 +68,7 @@ func GetUserProblems(w http.ResponseWriter, r *http.Request) {
 	for _, doc := range returnedProfile {
 		for key, value := range doc {
 			if key == "userId" {
-				userID = value.(int64)
+				userID = int64(value.(float64))
 				break
 			}
 		}

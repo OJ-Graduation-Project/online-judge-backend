@@ -87,15 +87,17 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 	}
 	// userSubmissionsIds := returnedProfile
 	var writerID int64
+	fmt.Print("problem is in writerID\n")
 	for _, doc := range returnedProfile {
 		for key, value := range doc {
 			if key == "userId" {
-				writerID = value.(int64)
+				fmt.Printf("userID %d, with type %T\n", value, value)
+				writerID = int64(value.(float64))
 				break
 			}
 		}
 	}
-
+	fmt.Println("writeID: ", writerID)
 	//Add userId as writerID to the problem.
 	problem.WriterID = writerID
 
