@@ -4,42 +4,22 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
-	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/entities"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func CreateProblem(w http.ResponseWriter, r *http.Request) {
-	//Add new problem to problems' collection in DB.
-	//Use to newly assigned id the db has given to the problem and assign it to problem.ID
-	fmt.Println("cookie", r.Cookies())
+type DisplaySubmission struct {
+	Name string `json:"name" bson:"problemName"`
+}
 
+func SubmissionHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	fmt.Println("cookie after", r.Cookies())
 
-	w.WriteHeader(http.StatusOK)
-	defer r.Body.Close()
-	decoder := json.NewDecoder(r.Body)
-	var problem entities.Problem
-	err := decoder.Decode(&problem)
-	if err != nil {
-		fmt.Println("Error couldn't decode problem")
-		fmt.Println(err)
-		return
-	}
-	problem.ID = rand.Intn(100000) // to be changed
-	problem.NumberOfSubmissions = -1
-	for i := 0; i < len(problem.Testcases); i++ {
-		problem.Testcases[i].ProblemID = problem.ID
-	}
-
-	//get the cookie
 	cookie, err := r.Cookie("cookie")
 	if err != nil {
 		json.NewEncoder(w).Encode(bson.M{"message": "couldnt fetch cookie"})
@@ -69,6 +49,7 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 		return
 	}
+
 	//get the user from db to get his ID
 	filterCursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": authEmail}, bson.M{})
 	if err != nil {
@@ -81,39 +62,65 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error in cursor")
 		log.Fatal(err)
 	}
+
 	if len(returnedProfile) == 0 {
 		fmt.Println("CURSOR IS EMPTY")
 		return
 	}
-	// userSubmissionsIds := returnedProfile
-	var writerID int64
-	fmt.Print("problem is in writerID\n")
+
+	var userID int64
 	for _, doc := range returnedProfile {
 		for key, value := range doc {
 			if key == "userId" {
-				fmt.Printf("userID %d, with type %T\n", value, value)
-				writerID = int64(value.(float64))
+				userID = value.(int64)
 				break
 			}
 		}
 	}
-	fmt.Println("writeID: ", writerID)
-	//Add userId as writerID to the problem.
-	problem.WriterID = writerID
 
-	fmt.Println("problem before insertions: \n", problem)
+	fmt.Println("Submission Handler userID", userID)
+
+	//====================
+	w.WriteHeader(http.StatusOK)
+	defer r.Body.Close()
+	decoder := json.NewDecoder(r.Body)
+	var submission DisplaySubmission
+	err = decoder.Decode(&submission)
+	if err != nil {
+		fmt.Println("Error couldn't decode problem")
+		log.Fatal(err)
+		return
+	}
+	fmt.Println("submission ", submission)
 
 	dbconnection, err = db.CreateDbConn()
 	defer dbconnection.Cancel()
 	if err != nil {
 		fmt.Println("Error in DB")
+		log.Fatal(err)
 		return
 	}
-
-	result, err := dbconnection.InsertOne(util.DB_NAME, util.PROBLEMS_COLLECTION, problem)
+	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
 	if err != nil {
-		fmt.Println("Error couldn't insert")
+		fmt.Println("Error in PING")
+		log.Fatal(err)
+		return
 	}
-	fmt.Println("inserted ID ", result.InsertedID)
-	json.NewEncoder(w).Encode(&problem)
+	filterCursor, err = dbconnection.Query(util.DB_NAME, util.SUBMISSIONS_COLLECTION, bson.M{"problemName": submission.Name}, bson.M{})
+	if err != nil {
+		fmt.Println("Error in query")
+		log.Fatal(err)
+	}
+
+	var returnedSubmission []bson.M
+	if err = filterCursor.All(dbconnection.Ctx, &returnedSubmission); err != nil {
+		fmt.Println("Error in cursor")
+		log.Fatal(err)
+	}
+	if len(returnedSubmission) == 0 {
+		fmt.Println("CURSOR IS EMPTY")
+		return
+	}
+	fmt.Println("FOUND IN DB ", returnedSubmission[0])
+	json.NewEncoder(w).Encode(&returnedSubmission[0])
 }
