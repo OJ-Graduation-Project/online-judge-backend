@@ -9,8 +9,8 @@ RUN go mod download
 
 COPY . ./
 
-RUN cd cmd/ && go build -o /online-judge-backend
+RUN cd cmd/ && go build -o ../online-judge-backend
 
 EXPOSE 8000
 
-CMD [ "/online-judge-backend" ]
+CMD ["./online-judge-backend"]
