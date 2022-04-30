@@ -4,13 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Contest struct {
-	// ID                 string `json:"contestID"`
+	ContestId          int    `json:"_id" bson:"_id"`
 	ContestName        string `json:"contestName"`
 	ContestStartDate   string `json:"contestStartDate"` //make date later
 	ContestEndDate     string `json:"contestEndDate"`   //make date later
@@ -32,7 +34,14 @@ func CreateContest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(contest)
+
 	//Save to database
+	idHex := primitive.NewObjectID().Hex()
+	id, err := strconv.ParseInt(idHex[9:], 16, 64)
+	if err != nil {
+		println("error couldn't create id")
+	}
+	contest.ContestId = int(id)
 
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()

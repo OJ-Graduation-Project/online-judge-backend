@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
+	"strconv"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/entities"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateProblem(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +34,15 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	problem.ID = rand.Intn(100000) // to be changed
+
+	idHex := primitive.NewObjectID().Hex()
+	id, err := strconv.ParseInt(idHex[9:], 16, 64)
+	if err != nil {
+		println("error couldn't create id")
+	}
+
+	problem.ID = int(id)
+
 	problem.NumberOfSubmissions = -1
 	for i := 0; i < len(problem.Testcases); i++ {
 		problem.Testcases[i].ProblemID = problem.ID
@@ -86,13 +95,13 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// userSubmissionsIds := returnedProfile
-	var writerID int64
+	var writerID int
 	fmt.Print("problem is in writerID\n")
 	for _, doc := range returnedProfile {
 		for key, value := range doc {
 			if key == "userId" {
 				fmt.Printf("userID %d, with type %T\n", value, value)
-				writerID = int64(value.(float64))
+				writerID = int(value.(float64))
 				break
 			}
 		}

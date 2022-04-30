@@ -48,7 +48,7 @@ func (all AllCont) GetContestAndStart(contestid int) {
 		fmt.Println("Error couldn't connect to database")
 	}
 	cursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{
-		"contestId": contestid,
+		"_id": contestid,
 	}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")

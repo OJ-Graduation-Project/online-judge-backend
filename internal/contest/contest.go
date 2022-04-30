@@ -11,7 +11,7 @@ import (
 )
 
 type Contest struct {
-	ContestId               int       `bson:"contestId,omitempty" json:"contestId,omitempty"`
+	ContestId               int       `bson:"_id,omitempty" json:"contestId,omitempty"`
 	ContestName             string    `bson:"contestName,omitempty" json:"contestName,omitempty"`
 	StartDate               time.Time `bson:"startDate,omitempty" json:"startDate,omitempty"`
 	StartTime               string    `bson:"startTime,omitempty" json:"startTime,omitempty"`
