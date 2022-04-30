@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"encoding/json"
 	"fmt"
@@ -65,9 +66,11 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	var failedCase entities.FailedTestCase
 	var accepted = true
 	if verdict != "Correct" && submissionRequest.IsContest == false {
-		failedCase.TestCase = problem.Testcases[failedTestCaseNumber]
+		if verdict != "Compilation Error" {
+			failedCase.TestCase = problem.Testcases[failedTestCaseNumber]
+			failedCase.User_output = userOutput
+		}
 		failedCase.Reason = verdict
-		failedCase.User_output = userOutput
 		accepted = false
 	} else if verdict != "Correct" && submissionRequest.IsContest {
 		accepted = false
@@ -77,9 +80,17 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	if verdict == "Correct" && submissionRequest.IsContest {
 		contest.GetInstance().GetContest(contestid).AcceptedSubmission(userid, submissionRequest.ProblemID)
 	}
+	idHex := primitive.NewObjectID().Hex()
+	id, erro := strconv.ParseInt(idHex[9:], 16, 64)
+	if erro != nil {
+		println("error couldn't create id")
+		println("Hex id", idHex)
+		println("id:", int(id))
+
+	}
 
 	var submission entities.Submission = entities.Submission{
-		SubmissionID:   100000, // to be changed
+		SubmissionID:   int(id),
 		ProblemID:      submissionRequest.ProblemID,
 		UserID:         submissionRequest.OwnerID,
 		Date:           submissionRequest.Date,
@@ -126,20 +137,13 @@ func InsertSubmission(sub entities.Submission, database string, col string, db d
 
 func FetchProblemByID(problemID int, database string, col string, db db.DbConnection) (entities.Problem, error) {
 	collection := db.Conn.Database(database).Collection(col)
-	var prob bson.D
-	err := collection.FindOne(db.Ctx, bson.M{"problemId": problemID}).Decode(&prob)
-
+	var result entities.Problem
+	err := collection.FindOne(db.Ctx, bson.D{primitive.E{Key: "_id", Value: problemID}}).Decode(&result)
 	if err != nil {
 		fmt.Println(err)
 		return entities.Problem{}, err
 	}
-	var ret entities.Problem
-	bsonBytes, err := bson.Marshal(prob)
-	if err != nil {
-		fmt.Println(err)
-	}
-	bson.Unmarshal(bsonBytes, &ret)
-	return ret, nil
+	return result, nil
 }
 
 //returns all testcases to certain Problem id.
@@ -170,7 +174,7 @@ func getIdfromEmail(authEmail string) int {
 		fmt.Println("Error in cursor")
 		log.Fatal(err)
 	}
-	return int(returnedUser[0]["userId"].(float64))
+	return int(returnedUser[0]["_id"].(float64))
 
 }
 

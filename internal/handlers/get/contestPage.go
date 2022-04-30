@@ -30,7 +30,7 @@ func GetContestDetails(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	cursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{
-		"contestId": contestid,
+		"_id": contestid,
 	}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
@@ -48,7 +48,7 @@ func GetContestDetails(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(problemids)
 
 	cursor, err = dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, bson.M{
-		"problemId": bson.M{
+		"_id": bson.M{
 			"$in": problemids,
 		},
 	}, bson.M{})

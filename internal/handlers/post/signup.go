@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"math"
-	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type User struct {
@@ -64,12 +64,20 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		errorUserExists = true
 		json.NewEncoder(w).Encode(&errorUserExists)
 	} else {
+
+		idHex := primitive.NewObjectID().Hex()
+		id, erro := strconv.ParseInt(idHex[9:], 16, 64)
+		if erro != nil {
+			println("error couldn't create id")
+		}
+
 		errorUserExists = false
 		json.NewEncoder(w).Encode(&errorUserExists)
+
 		_, err := dbconnection.InsertOne(util.DB_NAME, util.USERS_COLLECTION, bson.D{
 			{Key: "firstName", Value: user.Firstname},
 			{Key: "lastName", Value: user.Lastname},
-			{Key: "userId", Value: int(math.Floor(rand.Float64() * 100000))},
+			{Key: "_id", Value: int(id)},
 			{Key: "registrationDate", Value: time.Now()},
 			{Key: "email", Value: user.Email},
 			{Key: "groups", Value: "beginner"},
