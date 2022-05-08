@@ -73,11 +73,17 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 		failedCase.Reason = verdict
 		accepted = false
 	} else if verdict != "Correct" && submissionRequest.IsContest {
+		if verdict != "Compilation Error" {
+			failedCase.TestCase = problem.Testcases[failedTestCaseNumber]
+			failedCase.User_output = userOutput
+		}
 		accepted = false
 		failedCase.Reason = verdict
 		contest.GetInstance().GetContest(contestid).WrongSubmission(userid, submissionRequest.ProblemID)
 	}
+
 	if verdict == "Correct" && submissionRequest.IsContest {
+		accepted = true
 		contest.GetInstance().GetContest(contestid).AcceptedSubmission(userid, submissionRequest.ProblemID)
 	}
 	idHex := primitive.NewObjectID().Hex()

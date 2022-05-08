@@ -1,10 +1,11 @@
 package contest
 
 import (
+	"sort"
+
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/datastructures/pair"
 	"github.com/emirpasic/gods/maps/hashmap"
 	"github.com/pkg/math"
-	"sort"
 )
 
 type ScoreBoard_ struct {

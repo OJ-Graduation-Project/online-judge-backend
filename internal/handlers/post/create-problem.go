@@ -94,14 +94,15 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("CURSOR IS EMPTY")
 		return
 	}
+
 	// userSubmissionsIds := returnedProfile
 	var writerID int
 	fmt.Print("problem is in writerID\n")
 	for _, doc := range returnedProfile {
 		for key, value := range doc {
-			if key == "userId" {
+			if key == "_id" {
 				fmt.Printf("userID %d, with type %T\n", value, value)
-				writerID = int(value.(float64))
+				writerID = int(value.(int64))
 				break
 			}
 		}
