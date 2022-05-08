@@ -31,6 +31,10 @@ type User struct {
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
+	//Needed to bypass CORS headers
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 	w.WriteHeader(http.StatusOK)
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
