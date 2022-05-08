@@ -15,10 +15,16 @@ import (
 )
 
 type User struct {
-	Firstname string `json:"firstName"`
-	Lastname  string `json:"lastName"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+	Firstname                string `json:"firstName"`
+	Lastname                 string `json:"lastName"`
+	Email                    string `json:"email"`
+	Password                 string `json:"password"`
+	Country                  string `json:"country"`
+	Organization             string `json:"organization"`
+	acceptedCount            int    `json:"acceptedCount"`
+	wrongCount               int    `json:"wrongCount"`
+	timelimit_exceeded_count int    `json:"timelimit_exceeded_count"`
+	runtimeCount             int    `json:"runtimeCount"`
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +79,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 		errorUserExists = false
 		json.NewEncoder(w).Encode(&errorUserExists)
-
+		fmt.Println(user)
 		_, err := dbconnection.InsertOne(util.DB_NAME, util.USERS_COLLECTION, bson.D{
 			{Key: "firstName", Value: user.Firstname},
 			{Key: "lastName", Value: user.Lastname},
@@ -83,6 +89,12 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 			{Key: "groups", Value: "beginner"},
 			{Key: "rating", Value: 0},
 			{Key: "password", Value: HashPassword(user.Password)},
+			{Key: "country", Value: user.Country},
+			{Key: "organization", Value: user.Organization},
+			{Key: "acceptedCount", Value: user.acceptedCount},
+			{Key: "runtimeCount", Value: user.runtimeCount},
+			{Key: "timelimit_exceeded_count", Value: user.timelimit_exceeded_count},
+			{Key: "wrongCount", Value: user.wrongCount},
 		})
 		if err != nil {
 			fmt.Println("Error couldn't add user to database")
