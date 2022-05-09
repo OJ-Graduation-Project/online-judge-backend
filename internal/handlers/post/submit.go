@@ -87,7 +87,7 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 		contest.GetInstance().GetContest(contestid).AcceptedSubmission(userid, submissionRequest.ProblemID)
 	}
 	idHex := primitive.NewObjectID().Hex()
-	id, erro := strconv.ParseInt(idHex[9:], 16, 64)
+	id, erro := strconv.ParseInt(idHex[12:], 16, 64)
 	if erro != nil {
 		println("error couldn't create id")
 		println("Hex id", idHex)
@@ -98,7 +98,7 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	var submission entities.Submission = entities.Submission{
 		SubmissionID:   int(id),
 		ProblemID:      submissionRequest.ProblemID,
-		UserID:         submissionRequest.OwnerID,
+		UserID:         userid,
 		Date:           submissionRequest.Date,
 		Language:       submissionRequest.Language,
 		SubmittedCode:  submissionRequest.Code,
@@ -180,7 +180,13 @@ func getIdfromEmail(authEmail string) int {
 		fmt.Println("Error in cursor")
 		log.Fatal(err)
 	}
-	return int(returnedUser[0]["_id"].(int64))
+	val_int, ok := returnedUser[0]["_id"].(int64)
+	if !ok {
+		val_double := returnedUser[0]["_id"].(float64)
+		return int(val_double)
+	}
+
+	return int(val_int)
 
 }
 

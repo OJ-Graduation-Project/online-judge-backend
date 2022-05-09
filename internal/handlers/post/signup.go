@@ -72,7 +72,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		idHex := primitive.NewObjectID().Hex()
-		id, erro := strconv.ParseInt(idHex[9:], 16, 64)
+		id, erro := strconv.ParseInt(idHex[12:], 16, 64)
 		if erro != nil {
 			println("error couldn't create id")
 		}
