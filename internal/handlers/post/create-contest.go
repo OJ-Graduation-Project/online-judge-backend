@@ -37,7 +37,7 @@ func CreateContest(w http.ResponseWriter, r *http.Request) {
 
 	//Save to database
 	idHex := primitive.NewObjectID().Hex()
-	id, err := strconv.ParseInt(idHex[9:], 16, 64)
+	id, err := strconv.ParseInt(idHex[12:], 16, 64)
 	if err != nil {
 		println("error couldn't create id")
 	}

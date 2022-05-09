@@ -3,7 +3,7 @@ package entities
 type Submission struct {
 	SubmissionID   int            `json:"submissionId,omitempty" bson:"_id,omitempty"`
 	ProblemID      int            `json:"problemId,omitempty" bson:"problemId,omitempty"`
-	UserID         int            `json:"userId,omitempty" bson:"userId,omitempty"`
+	UserID         int            `json:"userId" bson:"userId"`
 	Date           string         `json:"date,omitempty" bson:"date,omitempty"`
 	Language       string         `json:"language,omitempty" bson:"language,omitempty"`
 	SubmittedCode  string         `json:"submittedCode,omitempty" bson:"submittedCode,omitempty"`

@@ -67,7 +67,14 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		resp.Name = users[0]["firstName"].(string)
-		resp.UserId = int(users[0]["_id"].(float64))
+
+		val_int, ok := users[0]["_id"].(int64)
+		if !ok {
+			val_double := users[0]["_id"].(float64)
+			resp.UserId = int(val_double)
+		}
+		resp.UserId = int(val_int)
+
 		resp.Score = ans[i].Score
 		response = append(response, resp)
 
