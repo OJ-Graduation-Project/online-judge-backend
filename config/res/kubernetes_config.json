@@ -1,0 +1,18 @@
+{
+    "server": {
+        "port": "8000",
+        "host": "localhost"
+    },
+    "mongo": {
+        "host": "mongo-svc",
+        "port": "80"
+    },
+    "redis": {
+        "host": "redis-svc",
+        "port": "80"
+    },
+    "frontend": {
+        "host": "oj-frontend.io",
+        "port": "80"
+    }
+}
