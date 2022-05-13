@@ -16,7 +16,9 @@ type Contest struct {
 	ContestName        string `json:"contestName"`
 	ContestStartDate   string `json:"contestStartDate"` //make date later
 	ContestEndDate     string `json:"contestEndDate"`   //make date later
-	Contest_problemset []int  `json:"contestProblemSet"`
+	Contest_problemset []string  `json:"contestProblemSet"`
+	ProblemsScore []int  `json:"problemsScore"`
+
 }
 
 func CreateContest(w http.ResponseWriter, r *http.Request) {
@@ -25,6 +27,7 @@ func CreateContest(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	var contest Contest
+	
 	err := decoder.Decode(&contest)
 	if err != nil {
 		fmt.Println("Error couldn't decode contest")
