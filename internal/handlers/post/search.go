@@ -17,9 +17,6 @@ type Search struct {
 
 func GetProblems(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
 	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)

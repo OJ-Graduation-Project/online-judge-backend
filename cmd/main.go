@@ -28,20 +28,21 @@ func main() {
 	flag.StringVar(
 		&configFilePath,
 		"config",
-		"./config/res/config.json",
+		"./config/res/localhost_config.json",
 		"Location of the config file",
 	)
 
 	flag.Parse()
 
 	config.LoadEnv(envFilePath)
-	config := config.LoadConfig(configFilePath)
+	config.LoadConfig(configFilePath)
 	//Test contest and test submissions.
 	all := contest.GetInstance()
 	all.GetContestAndStart(1)
 
 	router := routes.LoadRoutes()
-	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%d", config.Server.Host, config.Server.Port), router))
+	router.Use(routes.Middleware)
+	server_uri := fmt.Sprintf("%s:%s", config.AppConfig.Server.Host, config.AppConfig.Server.Port)
+	log.Fatal(http.ListenAndServe(server_uri, router))
 
-	_ = config // will be removed later
 }

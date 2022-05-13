@@ -19,8 +19,7 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Cookie is deleted")
 	http.SetCookie(w, cookie)
 	w.Header().Set("access-control-expose-headers", "Set-Cookie")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	json.NewEncoder(w).Encode(bson.M{"message": "logged out successfully"})
 }
