@@ -72,8 +72,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			http.SetCookie(w, cookie)
 			w.Header().Set("access-control-expose-headers", "Set-Cookie")
-			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 			w.WriteHeader(http.StatusOK)

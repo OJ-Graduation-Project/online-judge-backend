@@ -4,29 +4,32 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+
 	"github.com/joho/godotenv"
 )
-func LoadConfig(configFilePath string) (ApplicationConfig){
-	
+
+var AppConfig ApplicationConfig
+
+func LoadConfig(configFilePath string) {
+
 	file, err := ioutil.ReadFile(configFilePath)
-	if err != nil{
-		fmt.Println(err);
-	}
-	var config ApplicationConfig
-	err = json.Unmarshal(file, &config)
-	if err!= nil{
+	if err != nil {
 		fmt.Println(err)
 	}
 
-	return config;
+	err = json.Unmarshal(file, &AppConfig)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }
 
-func LoadEnv(envPath string){
+func LoadEnv(envPath string) {
 	// load .env file
 	err := godotenv.Load(envPath)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	
+
 }

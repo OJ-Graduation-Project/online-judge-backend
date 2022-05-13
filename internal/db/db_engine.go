@@ -6,13 +6,13 @@ import (
 	"log"
 	"time"
 
+	"github.com/OJ-Graduation-Project/online-judge-backend/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 //To be changed accoridng to config file
-var hostname = "mongodb://localhost:27017"
 
 type DbConnection struct {
 	Conn   *mongo.Client
@@ -23,9 +23,9 @@ type DbConnection struct {
 //Create a mongodb connection, return error if wasn't successful.
 func CreateDbConn() (DbConnection, error) {
 	//timeout for context.
+	mongo_uri := fmt.Sprintf("mongodb://%s:%s", config.AppConfig.Mongo.Host, config.AppConfig.Mongo.Port)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-
-	conn, err := mongo.Connect(ctx, options.Client().ApplyURI(hostname))
+	conn, err := mongo.Connect(ctx, options.Client().ApplyURI(mongo_uri))
 	if err != nil {
 		log.Println("Error couldn't connect to database")
 	}
@@ -85,11 +85,10 @@ func (dbconnection DbConnection) ListDatabases(ctx context.Context) ([]string, e
 
 func (dbconnection DbConnection) UpdateOne(database string, col string, query interface{}, update interface{}) {
 	collection := dbconnection.Conn.Database(database).Collection(col)
-	result, err := collection.UpdateOne(dbconnection.Ctx,query, update)
+	result, err := collection.UpdateOne(dbconnection.Ctx, query, update)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Print(result)
 
 }
-
