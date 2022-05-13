@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
-
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"github.com/gorilla/mux"
@@ -17,7 +15,7 @@ func ProblemHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()
-	problemid, _ := strconv.Atoi(mux.Vars(r)["problemid"])
+	problemName, _ := mux.Vars(r)["problemName"]
 
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
@@ -32,7 +30,7 @@ func ProblemHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 		return
 	}
-	filterCursor, err := dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, bson.M{"_id": problemid}, bson.M{})
+	filterCursor, err := dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, bson.M{"problemName": problemName}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
 		log.Fatal(err)
@@ -47,6 +45,5 @@ func ProblemHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("CURSOR IS EMPTY")
 		return
 	}
-	// fmt.Println("FOUND IN DB ", returnedProblem[0])
 	json.NewEncoder(w).Encode(&returnedProblem[0])
 }
