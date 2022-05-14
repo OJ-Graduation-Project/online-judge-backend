@@ -1,7 +1,7 @@
 {
     "server": {
         "port": "8000",
-        "host": "localhost"
+        "host": "0.0.0.0"
     },
     "mongo": {
         "host": "mongo-svc",
@@ -13,6 +13,6 @@
     },
     "frontend": {
         "host": "oj-frontend.io",
-        "port": "80"
+        "port": ""
     }
 }
