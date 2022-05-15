@@ -24,8 +24,6 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.Cookies())
 	//Needed to bypass CORS headers
 
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	w.WriteHeader(http.StatusOK)
 
 	defer r.Body.Close()

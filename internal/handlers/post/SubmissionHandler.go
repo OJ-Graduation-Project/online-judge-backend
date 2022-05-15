@@ -17,8 +17,6 @@ type DisplaySubmission struct {
 
 func SubmissionHandler(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
 	cookie, err := r.Cookie("cookie")
 	if err != nil {
 		json.NewEncoder(w).Encode(bson.M{"message": "couldnt fetch cookie"})

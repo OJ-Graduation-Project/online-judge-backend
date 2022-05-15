@@ -15,7 +15,6 @@ import (
 
 func GetUserSubmissions(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	userID, _ := strconv.Atoi(mux.Vars(r)["id"])
 
 	fmt.Println("userId = ", userID)

@@ -15,7 +15,6 @@ import (
 
 func GetUserProblems(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	userID, _ := strconv.Atoi(mux.Vars(r)["id"])
 
 	dbconnection, err := db.CreateDbConn()

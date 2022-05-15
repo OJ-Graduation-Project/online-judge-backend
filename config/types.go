@@ -8,13 +8,16 @@ type ApplicationConfig struct {
 }
 
 type FrontendConfig struct {
-	Host string `bson:"host,omitempty" json:"host,omitempty"`
-	Port string `bson:"port,omitempty" json:"port,omitempty"`
+	Host           string `bson:"host,omitempty" json:"host,omitempty"`
+	Port           string `bson:"port,omitempty" json:"port,omitempty"`
+	ConnectionType string `bson:"connectionType,omitempty" json:"connectionType,omitempty"`
+	SubPath        string `bson:"subPath,omitempty" json:"subPath,omitempty"`
 }
 
 type ServerConfig struct {
-	Host string `bson:"host,omitempty" json:"host,omitempty"`
-	Port string `bson:"port,omitempty" json:"port,omitempty"`
+	Host    string `bson:"host,omitempty" json:"host,omitempty"`
+	Port    string `bson:"port,omitempty" json:"port,omitempty"`
+	SubPath string `bson:"subPath,omitempty" json:"subPath,omitempty"`
 }
 
 type MongoConfig struct {
