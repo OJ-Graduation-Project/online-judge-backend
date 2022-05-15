@@ -3,18 +3,15 @@ package post
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
-	"strconv"
-
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
+	"log"
+	"net/http"
 )
 
 type Register struct {
-	UserId      string `json:"userId,omitempty"`
 	ContestName string `json:"contestName,omitempty"`
 }
 
@@ -23,11 +20,15 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	contestName := mux.Vars(r)["contestName"]
 	w.WriteHeader(http.StatusOK)
 	fmt.Println(contestName)
-
+	cookie, err := r.Cookie("cookie")
+	if err != nil {
+		fmt.Println("Cookie failed")
+		return
+	}
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	var register Register
-	err := decoder.Decode(&register)
+	err = decoder.Decode(&register)
 	if err != nil {
 		fmt.Println("Error couldn't decode user")
 		return
@@ -47,16 +48,21 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	returnedContest := FindContestByName(dbconnection, register)
+	returnedContest := FindContestByName(dbconnection, register.ContestName)
 	fmt.Println("FOUND IN DB ", returnedContest[0])
-
-	UpdateContestWithNewUser(dbconnection, returnedContest, register)
-	UpdateUserWithNewContest(dbconnection, returnedContest, register)
+	authEmail, err := util.AuthenticateToken(cookie.Value)
+	if err != nil {
+		json.NewEncoder(w).Encode(bson.M{"message": "unauthenticated user"})
+		return
+	}
+	fmt.Println("COOKIE VALUE IS: ", cookie.Value, " AND EMAIL IS: ", authEmail)
+	userID := getIdfromEmail(authEmail)
+	UpdateContestWithNewUser(dbconnection, returnedContest, userID)
+	UpdateUserWithNewContest(dbconnection, returnedContest, userID)
 
 	//To check results are saved successfully in db
 	query1 := bson.M{"contestName": register.ContestName}
-	integerUserId, _ := strconv.Atoi(register.UserId)
-	query2 := bson.M{"userId": integerUserId}
+	query2 := bson.M{"userId": userID}
 	_ = QueryToCheckResults(dbconnection, util.CONTESTS_COLLECTION, query1)
 	_ = QueryToCheckResults(dbconnection, util.USERS_COLLECTION, query2)
 	QueryToCheckResults(dbconnection, util.CONTESTS_COLLECTION, query1)
@@ -65,9 +71,9 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 //Find contest which matches certain contestName from db.
-func FindContestByName(dbconnection db.DbConnection, register Register) []bson.M {
+func FindContestByName(dbconnection db.DbConnection, contestName string) []bson.M {
 
-	filterCursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{"contestName": register.ContestName}, bson.M{})
+	filterCursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{"contestname": contestName}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
 		log.Fatal(err)
@@ -85,20 +91,19 @@ func FindContestByName(dbconnection db.DbConnection, register Register) []bson.M
 }
 
 //Insert new userid in the matched contest.
-func UpdateContestWithNewUser(dbconnection db.DbConnection, returnedContest []bson.M, register Register) {
+func UpdateContestWithNewUser(dbconnection db.DbConnection, returnedContest []bson.M, userID int) {
 
 	objId := returnedContest[0]["_id"]
 	query := bson.M{"_id": bson.M{"$eq": objId}}
-	update := bson.M{"$push": bson.M{"registeredUsersId": register.UserId}}
+	update := bson.M{"$push": bson.M{"registeredUsersId": userID}}
 
 	dbconnection.UpdateOne(util.DB_NAME, util.CONTESTS_COLLECTION, query, update)
 }
 
 //Inset contestid in user's registered contests.
-func UpdateUserWithNewContest(dbconnection db.DbConnection, returnedContest []bson.M, register Register) {
+func UpdateUserWithNewContest(dbconnection db.DbConnection, returnedContest []bson.M, userID int) {
 
-	integerUserId, _ := strconv.Atoi(register.UserId)
-	query := bson.M{"userId": bson.M{"$eq": integerUserId}}
+	query := bson.M{"userId": bson.M{"$eq": userID}}
 	update := bson.M{"$push": bson.M{"userContestsId": returnedContest[0]["_id"]}}
 
 	dbconnection.UpdateOne(util.DB_NAME, util.CONTESTS_COLLECTION, query, update)
