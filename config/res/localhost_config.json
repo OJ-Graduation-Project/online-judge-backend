@@ -1,7 +1,8 @@
 {
     "server": {
         "port": "8000",
-        "host": "localhost"
+        "host": "localhost",
+        "subPath": ""
     },
     "mongo": {
         "host": "localhost",
@@ -13,6 +14,8 @@
     },
     "frontend": {
         "host": "localhost",
-        "port": "3000"
+        "port": "3000",
+        "connectionType": "http",
+        "subPath": ""
     }
 }

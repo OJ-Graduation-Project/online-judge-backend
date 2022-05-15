@@ -19,7 +19,6 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 	//Use to newly assigned id the db has given to the problem and assign it to problem.ID
 	fmt.Println("cookie", r.Cookies())
 
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	fmt.Println("cookie after", r.Cookies())
 
 	w.WriteHeader(http.StatusOK)
