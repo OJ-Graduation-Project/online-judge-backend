@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -23,27 +25,33 @@ type ScoreResponse struct {
 	Score  int    `json:"score"`
 }
 
-type UserD struct {
+type Resp struct {
+	TotalNumber int             `json:"totalCount"`
+	Response    []ScoreResponse `json:"response"`
 }
 
 func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 
+	contestID, _ := strconv.Atoi(mux.Vars(r)["id"])
+	limit, _ := strconv.Atoi(mux.Vars(r)["limit"])
+	pagenumber, _ := strconv.Atoi(mux.Vars(r)["page"])
+
 	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()
-	decoder := json.NewDecoder(r.Body)
-	var scorereq ScoreRequest
-	err := decoder.Decode(&scorereq)
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	ctst := contest.GetInstance().GetContest(scorereq.ContestID)
 
-	ans := ctst.GetRanks(1, ctst.Board.Count())
+	ctst := contest.GetInstance().GetContest(contestID)
+	if limit > ctst.Board.Count() {
+		limit = ctst.Board.Count()
+	}
+	ans := ctst.GetRanks((pagenumber-1)*limit+1, limit)
 	fmt.Println(ctst.DisplayAllRanks())
 	mp := make(map[int]int)
 
 	dbconnection, err := db.CreateDbConn()
+	if err != nil {
+		fmt.Println("Error in DB connection")
+		log.Fatal(err)
+	}
 	defer dbconnection.Cancel()
 
 	var userids []int
@@ -103,7 +111,10 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	*/
 	fmt.Println(response)
+	var respWithTotalCount Resp
+	respWithTotalCount.TotalNumber = ctst.Board.Count()
+	respWithTotalCount.Response = response
 
-	json.NewEncoder(w).Encode(&response)
+	json.NewEncoder(w).Encode(&respWithTotalCount)
 
 }

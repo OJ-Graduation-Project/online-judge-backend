@@ -23,7 +23,7 @@ func LoadRoutes() *mux.Router {
 	router.HandleFunc("/user-problems/{id:[0-9]+}", post.GetUserProblems)
 
 	router.HandleFunc("/all-contests/Registration/contest-name={contestName}", post.RegisterHandler)
-	router.HandleFunc("/all-contests/contest/{id:[0-9]+}/scoreboard", post.ScoreBoardHandler)
+	router.HandleFunc("/all-contests/contest/{id:[0-9]+}/scoreboard/per_page={limit:[0-9]+}&page={page:[0-9]+}", post.ScoreBoardHandler)
 	router.HandleFunc("/problem", post.ProblemHandler)
 	router.HandleFunc("/submission", post.SubmissionHandler)
 	router.HandleFunc("/topic", post.TopicHandler)
