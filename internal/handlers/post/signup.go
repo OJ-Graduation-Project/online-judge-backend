@@ -29,8 +29,6 @@ type User struct {
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	//Needed to bypass CORS headers
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()
@@ -72,7 +70,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 
 		idHex := primitive.NewObjectID().Hex()
-		id, erro := strconv.ParseInt(idHex[9:], 16, 64)
+		id, erro := strconv.ParseInt(idHex[12:], 16, 64)
 		if erro != nil {
 			println("error couldn't create id")
 		}

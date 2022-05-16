@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
-
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"github.com/gorilla/mux"
@@ -15,11 +13,8 @@ import (
 
 func GetContestDetails(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	contestid, _ := strconv.Atoi(mux.Vars(r)["id"])
-
-	//fmt.Println(contestid)
+	//contestid, _ := strconv.Atoi(mux.Vars(r)["id"])
+	contestName, _ := mux.Vars(r)["contestName"]
 	w.WriteHeader(http.StatusOK)
 
 	dbconnection, err := db.CreateDbConn()
@@ -30,7 +25,7 @@ func GetContestDetails(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	cursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{
-		"_id": contestid,
+		"contestname": contestName,
 	}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
@@ -44,12 +39,13 @@ func GetContestDetails(w http.ResponseWriter, r *http.Request) {
 	if len(contests) > 1 {
 		fmt.Printf("Error more than one Contest with the same ID")
 	}
-	problemids := contests[0]["contestProblemId"]
-	fmt.Println(problemids)
+
+	problemsName := contests[0]["contest_problemset"]
+	fmt.Println(problemsName)
 
 	cursor, err = dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, bson.M{
-		"_id": bson.M{
-			"$in": problemids,
+		"problemName": bson.M{
+			"$in": problemsName,
 		},
 	}, bson.M{})
 	if err != nil {

@@ -19,9 +19,6 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 	//Use to newly assigned id the db has given to the problem and assign it to problem.ID
 	fmt.Println("cookie", r.Cookies())
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	fmt.Println("cookie after", r.Cookies())
 
 	w.WriteHeader(http.StatusOK)
@@ -36,7 +33,7 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 	}
 
 	idHex := primitive.NewObjectID().Hex()
-	id, err := strconv.ParseInt(idHex[9:], 16, 64)
+	id, err := strconv.ParseInt(idHex[12:], 16, 64)
 	if err != nil {
 		println("error couldn't create id")
 	}
@@ -94,14 +91,15 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("CURSOR IS EMPTY")
 		return
 	}
+
 	// userSubmissionsIds := returnedProfile
 	var writerID int
 	fmt.Print("problem is in writerID\n")
 	for _, doc := range returnedProfile {
 		for key, value := range doc {
-			if key == "userId" {
+			if key == "_id" {
 				fmt.Printf("userID %d, with type %T\n", value, value)
-				writerID = int(value.(float64))
+				writerID = int(value.(int64))
 				break
 			}
 		}

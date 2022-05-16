@@ -23,9 +23,6 @@ import (
 func Submit(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.Cookies())
 	//Needed to bypass CORS headers
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 	w.WriteHeader(http.StatusOK)
 
@@ -73,15 +70,21 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 		failedCase.Reason = verdict
 		accepted = false
 	} else if verdict != "Correct" && submissionRequest.IsContest {
+		if verdict != "Compilation Error" {
+			failedCase.TestCase = problem.Testcases[failedTestCaseNumber]
+			failedCase.User_output = userOutput
+		}
 		accepted = false
 		failedCase.Reason = verdict
 		contest.GetInstance().GetContest(contestid).WrongSubmission(userid, submissionRequest.ProblemID)
 	}
+
 	if verdict == "Correct" && submissionRequest.IsContest {
+		accepted = true
 		contest.GetInstance().GetContest(contestid).AcceptedSubmission(userid, submissionRequest.ProblemID)
 	}
 	idHex := primitive.NewObjectID().Hex()
-	id, erro := strconv.ParseInt(idHex[9:], 16, 64)
+	id, erro := strconv.ParseInt(idHex[12:], 16, 64)
 	if erro != nil {
 		println("error couldn't create id")
 		println("Hex id", idHex)
@@ -92,7 +95,7 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	var submission entities.Submission = entities.Submission{
 		SubmissionID:   int(id),
 		ProblemID:      submissionRequest.ProblemID,
-		UserID:         submissionRequest.OwnerID,
+		UserID:         userid,
 		Date:           submissionRequest.Date,
 		Language:       submissionRequest.Language,
 		SubmittedCode:  submissionRequest.Code,
@@ -174,7 +177,13 @@ func getIdfromEmail(authEmail string) int {
 		fmt.Println("Error in cursor")
 		log.Fatal(err)
 	}
-	return int(returnedUser[0]["_id"].(int64))
+	val_int, ok := returnedUser[0]["_id"].(int64)
+	if !ok {
+		val_double := returnedUser[0]["_id"].(float64)
+		return int(val_double)
+	}
+
+	return int(val_int)
 
 }
 

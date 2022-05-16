@@ -16,17 +16,18 @@ type Contest struct {
 	ContestName        string `json:"contestName"`
 	ContestStartDate   string `json:"contestStartDate"` //make date later
 	ContestEndDate     string `json:"contestEndDate"`   //make date later
-	Contest_problemset []int  `json:"contestProblemSet"`
+	Contest_problemset []string  `json:"contestProblemSet"`
+	ProblemsScore []int  `json:"problemsScore"`
+
 }
 
 func CreateContest(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	var contest Contest
+	
 	err := decoder.Decode(&contest)
 	if err != nil {
 		fmt.Println("Error couldn't decode contest")
@@ -37,7 +38,7 @@ func CreateContest(w http.ResponseWriter, r *http.Request) {
 
 	//Save to database
 	idHex := primitive.NewObjectID().Hex()
-	id, err := strconv.ParseInt(idHex[9:], 16, 64)
+	id, err := strconv.ParseInt(idHex[12:], 16, 64)
 	if err != nil {
 		println("error couldn't create id")
 	}

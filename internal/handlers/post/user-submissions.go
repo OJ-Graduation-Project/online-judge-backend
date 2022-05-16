@@ -5,32 +5,19 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func GetUserSubmissions(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	fmt.Println("in submissions")
-	cookie, err := r.Cookie("cookie")
-	if err != nil {
-		json.NewEncoder(w).Encode(bson.M{"message": "couldnt fetch cookie"})
-		fmt.Println("Error in getting cookie")
-		return
-	}
+	userID, _ := strconv.Atoi(mux.Vars(r)["id"])
 
-	//get email from the cookie to fetch the user from db
-	authEmail, err := util.AuthenticateToken(cookie.Value)
-	if err != nil {
-		json.NewEncoder(w).Encode(bson.M{"message": "unauthenticated user"})
-		fmt.Println("Error in getting authEmail from cookie")
-		return
-	}
+	fmt.Println("userId = ", userID)
 
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
@@ -45,34 +32,6 @@ func GetUserSubmissions(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error in PING")
 		log.Fatal(err)
 		return
-	}
-
-	//get the user from db to get his ID
-	filterCursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": authEmail}, bson.M{})
-	if err != nil {
-		fmt.Println("Error in query")
-		log.Fatal(err)
-	}
-
-	var returnedProfile []bson.M
-	if err = filterCursor.All(dbconnection.Ctx, &returnedProfile); err != nil {
-		fmt.Println("Error in cursor")
-		log.Fatal(err)
-	}
-
-	if len(returnedProfile) == 0 {
-		fmt.Println("CURSOR IS EMPTY")
-		return
-	}
-
-	var userID int64
-	for _, doc := range returnedProfile {
-		for key, value := range doc {
-			if key == "_id" {
-				userID = int64(value.(float64))
-				break
-			}
-		}
 	}
 
 	fmt.Println(userID)

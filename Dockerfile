@@ -13,4 +13,4 @@ RUN cd cmd/ && go build -o ../online-judge-backend
 
 EXPOSE 8000
 
-CMD ["./online-judge-backend"]
+CMD ["./online-judge-backend", "--config=./config/res/kubernetes_config.json"]

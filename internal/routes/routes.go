@@ -1,6 +1,9 @@
 package routes
 
 import (
+	"fmt"
+
+	"github.com/OJ-Graduation-Project/online-judge-backend/config"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/handlers/get"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/handlers/post"
 	"github.com/gorilla/mux"
@@ -8,27 +11,27 @@ import (
 
 func LoadRoutes() *mux.Router {
 	router := mux.NewRouter()
-	router.HandleFunc("/", get.Root).Methods("GET")
-	router.HandleFunc("/submit", post.Submit)
-	router.HandleFunc("/login", post.LoginHandler)
-	router.HandleFunc("/logout", post.LogoutHandler)
-	router.HandleFunc("/sign-up", post.SignupHandler)
-	router.HandleFunc("/home", post.GetProblems)
-	router.HandleFunc("/create-problem", post.CreateProblem)
-	router.HandleFunc("/create-contest", post.CreateContest)
-	router.HandleFunc("/all-contests", get.GetAllContests)
-	router.HandleFunc("/all-contests/contest/{id:[0-9]+}", get.GetContestDetails)
+	subPath := config.AppConfig.Server.SubPath
 
-	router.HandleFunc("/user-submissions", post.GetUserSubmissions)
-	router.HandleFunc("/user-problems", post.GetUserProblems)
-
-	router.HandleFunc("/all-contests/Registration/contest-name={contestName}", post.RegisterHandler)
-	router.HandleFunc("/all-contests/contest/{id:[0-9]+}/scoreboard", post.ScoreBoardHandler)
-	router.HandleFunc("/problem", post.ProblemHandler)
-	router.HandleFunc("/submission", post.SubmissionHandler)
-	router.HandleFunc("/topic", post.TopicHandler)
-	router.HandleFunc("/all-contests/contest/{id:[0-9]+}/problem/{problemid:[0-9]+}", get.ProblemHandler)
-	router.HandleFunc("/profile", post.ProfileHandler).Methods("POST")
+	router.HandleFunc(fmt.Sprintf("%s/", subPath), get.Root).Methods("GET")
+	router.HandleFunc(fmt.Sprintf("%s/submit", subPath), post.Submit)
+	router.HandleFunc(fmt.Sprintf("%s/login", subPath), post.LoginHandler)
+	router.HandleFunc(fmt.Sprintf("%s/logout", subPath), post.LogoutHandler)
+	router.HandleFunc(fmt.Sprintf("%s/sign-up", subPath), post.SignupHandler)
+	router.HandleFunc(fmt.Sprintf("%s/home", subPath), post.GetProblems)
+	router.HandleFunc(fmt.Sprintf("%s/create-problem", subPath), post.CreateProblem)
+	router.HandleFunc(fmt.Sprintf("%s/create-contest", subPath), post.CreateContest)
+	router.HandleFunc(fmt.Sprintf("%s/all-contests", subPath), get.GetAllContests)
+	router.HandleFunc(fmt.Sprintf("%s/all-contests/contest/{contestName}", subPath), get.GetContestDetails)
+	router.HandleFunc(fmt.Sprintf("%s/user-submissions/{id:[0-9]+}", subPath), post.GetUserSubmissions)
+	router.HandleFunc(fmt.Sprintf("%s/user-problems/{id:[0-9]+}", subPath), post.GetUserProblems)
+	router.HandleFunc(fmt.Sprintf("%s/all-contests/Registration/contest-name={contestName}", subPath), post.RegisterHandler)
+	router.HandleFunc(fmt.Sprintf("%s/all-contests/contest/{contestName}/scoreboard", subPath), post.ScoreBoardHandler)
+	router.HandleFunc(fmt.Sprintf("%s/problem", subPath), post.ProblemHandler)
+	router.HandleFunc(fmt.Sprintf("%s/submission", subPath), post.SubmissionHandler)
+	router.HandleFunc(fmt.Sprintf("%s/topic", subPath), post.TopicHandler)
+	router.HandleFunc(fmt.Sprintf("%s/all-contests/contest/{contestName}/problem/{problemName}", subPath), get.ProblemHandler)
+	router.HandleFunc(fmt.Sprintf("%s/profile", subPath), post.ProfileHandler).Methods("POST")
 
 	return router
 }

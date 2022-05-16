@@ -3,8 +3,10 @@ package post
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
@@ -13,8 +15,8 @@ import (
 )
 
 type ScoreRequest struct {
-	ContestID int `json:"contestid"`
-	Page      int `json:"page"`
+	ContestName string `json:"contestid"`
+	Page        int    `json:"page"`
 }
 
 type ScoreResponse struct {
@@ -26,27 +28,37 @@ type ScoreResponse struct {
 type UserD struct {
 }
 
+type Resp struct {
+	TotalNumber int             `json:"totalCount"`
+	Response    []ScoreResponse `json:"response"`
+}
+
 func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
+
+	limit, _ := strconv.Atoi(mux.Vars(r)["limit"])
+	pagenumber, _ := strconv.Atoi(mux.Vars(r)["page"])
+
 	var scorereq ScoreRequest
 	err := decoder.Decode(&scorereq)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
-	ctst := contest.GetInstance().GetContest(scorereq.ContestID)
-
-	ans := ctst.GetRanks(1, ctst.Board.Count())
-	fmt.Println(ctst.DisplayAllRanks())
-	mp := make(map[int]int)
-
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
+	contestID := FindContestByName(dbconnection, scorereq.ContestName)[0]["_id"].(int)
+	ctst := contest.GetInstance().GetContest(contestID)
+
+	if limit > ctst.Board.Count() {
+		limit = ctst.Board.Count()
+	}
+	ans := ctst.GetRanks((pagenumber-1)*limit+1, limit)
+	fmt.Println(ctst.DisplayAllRanks())
+	mp := make(map[int]int)
 
 	var userids []int
 
@@ -67,7 +79,14 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		resp.Name = users[0]["firstName"].(string)
-		resp.UserId = int(users[0]["_id"].(float64))
+
+		val_int, ok := users[0]["_id"].(int64)
+		if !ok {
+			val_double := users[0]["_id"].(float64)
+			resp.UserId = int(val_double)
+		}
+		resp.UserId = int(val_int)
+
 		resp.Score = ans[i].Score
 		response = append(response, resp)
 
@@ -98,7 +117,9 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	*/
 	fmt.Println(response)
-
-	json.NewEncoder(w).Encode(&response)
+	var respWithTotalCount Resp
+	respWithTotalCount.TotalNumber = ctst.Board.Count()
+	respWithTotalCount.Response = response
+	json.NewEncoder(w).Encode(&respWithTotalCount)
 
 }
