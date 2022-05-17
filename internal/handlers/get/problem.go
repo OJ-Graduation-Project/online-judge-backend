@@ -16,34 +16,44 @@ func ProblemHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()
 	problemName, _ := mux.Vars(r)["problemName"]
+	fmt.Println()
+	fmt.Println(util.CREATING_DATABASE_CONNECTION)
 
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
 	if err != nil {
-		fmt.Println("Error in DB")
+		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		log.Fatal(err)
 		return
 	}
+	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
+
+	fmt.Println(util.PING_DATABASE)
 	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
 	if err != nil {
-		fmt.Println("Error in PING")
+		fmt.Println(util.PING)
 		log.Fatal(err)
 		return
 	}
+
+	fmt.Println(util.FETCHING_PROBLEM + problemName)
 	filterCursor, err := dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, bson.M{"problemName": problemName}, bson.M{})
 	if err != nil {
-		fmt.Println("Error in query")
+		fmt.Println(util.QUERY)
 		log.Fatal(err)
 	}
 
 	var returnedProblem []bson.M
 	if err = filterCursor.All(dbconnection.Ctx, &returnedProblem); err != nil {
-		fmt.Println("Error in cursor")
+		fmt.Println(util.CURSOR)
 		log.Fatal(err)
 	}
+
 	if len(returnedProblem) == 0 {
-		fmt.Println("CURSOR IS EMPTY")
+		fmt.Println(util.EMPTY_PROBLEM + problemName + "!")
 		return
 	}
+
+	fmt.Println(util.RETURNING_PROBLEM)
 	json.NewEncoder(w).Encode(&returnedProblem[0])
 }

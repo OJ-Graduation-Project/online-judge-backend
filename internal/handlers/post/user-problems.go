@@ -16,18 +16,22 @@ import (
 func GetUserProblems(w http.ResponseWriter, r *http.Request) {
 
 	userID, _ := strconv.Atoi(mux.Vars(r)["id"])
-
+	
+	fmt.Println()
+	fmt.Println(util.CREATING_DATABASE_CONNECTION)
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
 	if err != nil {
-		fmt.Println("Error in DB")
+		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		log.Fatal(err)
 		return
 	}
+	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
 
+	fmt.Println(util.PING_DATABASE)
 	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
 	if err != nil {
-		fmt.Println("Error in PING")
+		fmt.Println(util.PING)
 		log.Fatal(err)
 		return
 	}
@@ -37,20 +41,20 @@ func GetUserProblems(w http.ResponseWriter, r *http.Request) {
 	dbconnection, err = db.CreateDbConn()
 	defer dbconnection.Cancel()
 	if err != nil {
-		fmt.Println("Error couldn't connect to db")
+		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		log.Fatal(err)
 	}
-
+	fmt.Println(util.FETCHING_USER_PROBLEMS)
 	cursor, err := dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, bson.M{"writerId": userID}, bson.M{})
 	if err != nil {
-		fmt.Println("Error in query")
+		fmt.Println(util.QUERY)
 		log.Fatal(err)
 	}
 	var problems []bson.M
 	if err = cursor.All(dbconnection.Ctx, &problems); err != nil {
-		fmt.Println("Error in cursor")
+		fmt.Println(util.CURSOR)
 		log.Fatal(err)
 	}
-	fmt.Println(problems)
+	fmt.Println(util.RETURNING_USER_PROBLEMS)
 	json.NewEncoder(w).Encode(&problems)
 }

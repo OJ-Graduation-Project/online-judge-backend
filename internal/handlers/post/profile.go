@@ -16,79 +16,75 @@ type DisplayProfile struct {
 }
 
 func ProfileHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("cookie", r.Cookies())
 
 	w.WriteHeader(http.StatusOK)
 
 	defer r.Body.Close()
 
 	decoder := json.NewDecoder(r.Body)
-
 	var profile DisplayProfile
+	
+	fmt.Println()
+	fmt.Println(util.DECODE_USER)
 	err := decoder.Decode(&profile)
 	if err != nil {
-		fmt.Println("Error couldn't decode profile")
+		fmt.Println(util.DECODE_USER_FAILED)
 		log.Fatal(err)
 		return
 	}
-	fmt.Println("profile", profile)
-	fmt.Println("profile.userID ", profile.UserID)
+	fmt.Println(util.DECODE_USER_SUCCESS)
 
+	fmt.Println(util.GETTING_COOKIE)
 	cookie, err := r.Cookie("cookie")
 	if err != nil {
+		fmt.Println(util.COOKIE)
 		json.NewEncoder(w).Encode(bson.M{"message": "couldnt fetch cookie"})
 		return
 	}
+	fmt.Println(util.EMAIL_FROM_COOKIE)
 	authEmail, err := util.AuthenticateToken(cookie.Value)
 	if err != nil {
+		fmt.Println(util.EMAIL_FROM_COOKIE_FAILED)
 		json.NewEncoder(w).Encode(bson.M{"message": "unauthenticated user"})
 		return
 	}
-	fmt.Println("COOKIE VALUE IS: ", cookie.Value, " AND EMAIL IS: ", authEmail)
+	fmt.Println(util.EMAIL_FROM_COOKIE_SUCCESS)
 
+	fmt.Println(util.CREATING_DATABASE_CONNECTION)
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
 	if err != nil {
-		fmt.Println("Error in DB")
+		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		log.Fatal(err)
 		return
 	}
+	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
+
+	fmt.Println(util.PING_DATABASE)
 	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
 	if err != nil {
-		fmt.Println("Error in PING")
+		fmt.Println(util.PING)
 		log.Fatal(err)
 		return
 	}
+	fmt.Println(util.FETCHING_USER_FROM_EMAIL + authEmail)
 	filterCursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": authEmail}, bson.M{})
 	if err != nil {
-		fmt.Println("Error in query")
+		fmt.Println(util.QUERY)
 		log.Fatal(err)
 	}
 
 	var returnedProfile []bson.M
 	if err = filterCursor.All(dbconnection.Ctx, &returnedProfile); err != nil {
-		fmt.Println("Error in cursor")
+		fmt.Println(util.CURSOR)
 		log.Fatal(err)
 	}
 	if len(returnedProfile) == 0 {
-		fmt.Println("CURSOR IS EMPTY")
+		fmt.Println(util.USER_NOT_FOUND)
 		return
 	}
-	var userSubmissionsIds string
-	// userSubmissionsIds := returnedProfile
-	for _, doc := range returnedProfile {
-		for key, value := range doc {
-			fmt.Println("key and value : ", key, value)
-			if key == "userSubmissionsId" {
-				// userSubmissionsIds := value
-				// fmt.Println("inside loop", userSubmissionsIds)
-				// fmt.Println("value type", reflect.TypeOf(value))
-				// break
-			}
-		}
-	}
-	fmt.Println(userSubmissionsIds)
-	fmt.Println("FOUND IN DB ", returnedProfile[0])
+
+	fmt.Println(util.RETURNING_USER)
 	json.NewEncoder(w).Encode(&returnedProfile[0])
 }
 
