@@ -3,13 +3,13 @@ package post
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
+	"io"
+	"log"
+	"net/http"
 )
 
 type LoginUser struct {
@@ -37,7 +37,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}(r.Body)
 	decoder := json.NewDecoder(r.Body)
 	var loginUser LoginUser
-	
+
 	fmt.Println()
 	fmt.Println(util.DECODE_USER)
 	err := decoder.Decode(&loginUser)
@@ -100,4 +100,3 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(bson.M{"message": "Incorrect Email!"})
 	}
 }
-		

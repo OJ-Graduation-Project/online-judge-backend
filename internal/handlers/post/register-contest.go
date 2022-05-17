@@ -78,7 +78,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	UpdateContestWithNewUser(dbconnection, returnedContest, userID)
 	fmt.Println(util.UPDATE_USER_WITH_CONTEST)
 	UpdateUserWithNewContest(dbconnection, returnedContest, userID)
-
+	json.NewEncoder(w).Encode(bson.M{"message": "Registered successfully!"})
 	//To check results are saved successfully in db
 	// query1 := bson.M{"contestName": register.ContestName}
 	// query2 := bson.M{"userId": userID}
