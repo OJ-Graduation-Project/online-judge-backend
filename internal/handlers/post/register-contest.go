@@ -19,54 +19,73 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 	contestName := mux.Vars(r)["contestName"]
 	w.WriteHeader(http.StatusOK)
-	fmt.Println(contestName)
+
+	fmt.Println()
+	fmt.Println(util.GETTING_COOKIE)
 	cookie, err := r.Cookie("cookie")
 	if err != nil {
-		fmt.Println("Cookie failed")
+		fmt.Println(util.COOKIE)
 		return
 	}
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	var register Register
+	fmt.Println(util.DECODE_REGISTER)
 	err = decoder.Decode(&register)
 	if err != nil {
-		fmt.Println("Error couldn't decode user")
+		fmt.Println(util.DECODE_REGISTER_FAILED)
 		return
 	}
+	fmt.Println(util.DECODE_REGISTER_SUCCESS)
 
+	fmt.Println(util.CREATING_DATABASE_CONNECTION)
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
 	if err != nil {
-		fmt.Println("Error in DB")
+		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		log.Fatal(err)
 		return
 	}
+	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
+
+	fmt.Println(util.PING_DATABASE)
 	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
 	if err != nil {
-		fmt.Println("Error in PING")
+		fmt.Println(util.PING)
 		log.Fatal(err)
 		return
 	}
 
+	fmt.Println(util.FETCH_CONTEST + contestName)
+
 	returnedContest := FindContestByName(dbconnection, register.ContestName)
-	fmt.Println("FOUND IN DB ", returnedContest[0])
+
+	fmt.Println(util.FETCHED_CONTEST_SUCCESS)
+
+	fmt.Println(util.EMAIL_FROM_COOKIE)
 	authEmail, err := util.AuthenticateToken(cookie.Value)
 	if err != nil {
+		fmt.Println(util.EMAIL_FROM_COOKIE_FAILED)
 		json.NewEncoder(w).Encode(bson.M{"message": "unauthenticated user"})
 		return
 	}
-	fmt.Println("COOKIE VALUE IS: ", cookie.Value, " AND EMAIL IS: ", authEmail)
-	userID := getIdfromEmail(authEmail)
-	UpdateContestWithNewUser(dbconnection, returnedContest, userID)
-	UpdateUserWithNewContest(dbconnection, returnedContest, userID)
+	fmt.Println(util.EMAIL_FROM_COOKIE_SUCCESS)
 
+	fmt.Println(util.FETCHING_USER_FROM_EMAIL + authEmail)
+	userID := getIdfromEmail(authEmail)
+
+	fmt.Println(util.UPDATE_CONTEST_WITH_USER)
+	UpdateContestWithNewUser(dbconnection, returnedContest, userID)
+	fmt.Println(util.UPDATE_USER_WITH_CONTEST)
+	UpdateUserWithNewContest(dbconnection, returnedContest, userID)
+	json.NewEncoder(w).Encode(bson.M{"message": "Registered successfully!"})
 	//To check results are saved successfully in db
-	query1 := bson.M{"contestName": register.ContestName}
-	query2 := bson.M{"userId": userID}
-	_ = QueryToCheckResults(dbconnection, util.CONTESTS_COLLECTION, query1)
-	_ = QueryToCheckResults(dbconnection, util.USERS_COLLECTION, query2)
-	QueryToCheckResults(dbconnection, util.CONTESTS_COLLECTION, query1)
-	QueryToCheckResults(dbconnection, util.USERS_COLLECTION, query2)
+	// query1 := bson.M{"contestName": register.ContestName}
+	// query2 := bson.M{"userId": userID}
+	// _ = QueryToCheckResults(dbconnection, util.CONTESTS_COLLECTION, query1)
+	// _ = QueryToCheckResults(dbconnection, util.USERS_COLLECTION, query2)
+	// QueryToCheckResults(dbconnection, util.CONTESTS_COLLECTION, query1)
+	// QueryToCheckResults(dbconnection, util.USERS_COLLECTION, query2)
 
 }
 
@@ -75,17 +94,17 @@ func FindContestByName(dbconnection db.DbConnection, contestName string) []bson.
 
 	filterCursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{"contestname": contestName}, bson.M{})
 	if err != nil {
-		fmt.Println("Error in query")
+		fmt.Println(util.QUERY)
 		log.Fatal(err)
 	}
 
 	var returnedContest []bson.M
 	if err = filterCursor.All(dbconnection.Ctx, &returnedContest); err != nil {
-		fmt.Println("Error in cursor")
+		fmt.Println(util.CURSOR)
 		log.Fatal(err)
 	}
 	if len(returnedContest) == 0 {
-		fmt.Println("CURSOR IS EMPTY")
+		fmt.Println(util.EMPTY_CONTEST + contestName)
 	}
 	return returnedContest
 }

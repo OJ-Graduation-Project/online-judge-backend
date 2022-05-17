@@ -28,7 +28,7 @@ func LoadRoutes() *mux.Router {
 	router.HandleFunc(fmt.Sprintf("%s/all-contests/Registration/contest-name={contestName}", subPath), post.RegisterHandler)
 	router.HandleFunc(fmt.Sprintf("%s/all-contests/contest/{contestName}/scoreboard", subPath), post.ScoreBoardHandler)
 	router.HandleFunc(fmt.Sprintf("%s/problem", subPath), post.ProblemHandler)
-	router.HandleFunc(fmt.Sprintf("%s/submission", subPath), post.SubmissionHandler)
+	router.HandleFunc(fmt.Sprintf("%s/submission/{id:[0-9]+}", subPath), post.SubmissionHandler)
 	router.HandleFunc(fmt.Sprintf("%s/topic", subPath), post.TopicHandler)
 	router.HandleFunc(fmt.Sprintf("%s/all-contests/contest/{contestName}/problem/{problemName}", subPath), get.ProblemHandler)
 	router.HandleFunc(fmt.Sprintf("%s/profile", subPath), post.ProfileHandler).Methods("POST")

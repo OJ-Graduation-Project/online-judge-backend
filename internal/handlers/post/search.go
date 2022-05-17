@@ -21,29 +21,39 @@ func GetProblems(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	var searchRequest Search
+	
+	fmt.Println()
+	fmt.Println(util.DECODE_SEARCH)
 	err := decoder.Decode(&searchRequest)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(util.DECODE_SEARCH_FAILED)
 		return
 	}
+	fmt.Println(util.DECODE_SEARCH_SUCCESS)
+
+	fmt.Println(util.CREATING_DATABASE_CONNECTION)
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
 	if err != nil {
-		fmt.Println("Error in DB")
+		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		log.Fatal(err)
 		return
 	}
+	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
+
+	fmt.Println(util.PING_DATABASE)
 	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
 	if err != nil {
-		fmt.Println("Error in PING")
+		fmt.Println(util.PING)
 		log.Fatal(err)
 		return
 	}
 
 	query := bson.M{"problemName": bson.M{"$regex": searchRequest.SearchValue, "$options": "i"}}
-
+	fmt.Println(util.FETCHING_SEARCH_PROBLEMS + searchRequest.SearchValue)
 	desiredProblems := QueryToCheckResults(dbconnection, util.PROBLEMS_COLLECTION, query)
-
+	
+	fmt.Println(util.RETURNING_PROBLEM)
 	json.NewEncoder(w).Encode(&desiredProblems)
 
 }

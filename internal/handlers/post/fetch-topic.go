@@ -21,30 +21,41 @@ func TopicHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	var topicProblems DisplayTopic
+
+	fmt.Println()
+	fmt.Println(util.DECODE_TOPIC)
 	err := decoder.Decode(&topicProblems)
 	if err != nil {
-		fmt.Println("Error couldn't decode problem")
+		fmt.Println(util.DECODE_TOPIC_FAILED)
 		log.Fatal(err)
 		return
 	}
-	fmt.Println(topicProblems)
 
+	fmt.Println(util.DECODE_TOPIC_SUCCESS)
+
+	fmt.Println(util.CREATING_DATABASE_CONNECTION)
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
 	if err != nil {
-		fmt.Println("Error in DB")
+		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		log.Fatal(err)
 		return
 	}
+	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
+
+	fmt.Println(util.PING_DATABASE)
 	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
 	if err != nil {
-		fmt.Println("Error in PING")
+		fmt.Println(util.PING)
 		log.Fatal(err)
 		return
 	}
-	query := bson.M{"topic": bson.M{"$in": bson.A{topicProblems.Name}}}
 
+	fmt.Println(util.FETCHING_PROBLEMS_FROM_TOPIC + topicProblems.Name)
+	query := bson.M{"topic": bson.M{"$in": bson.A{topicProblems.Name}}}
 	desiredProblems := QueryToCheckResults(dbconnection, util.PROBLEMS_COLLECTION, query)
+
+	fmt.Println(util.RETURNING_DESIRED_PROBLEMS)
 	json.NewEncoder(w).Encode(&desiredProblems)
 
 }
