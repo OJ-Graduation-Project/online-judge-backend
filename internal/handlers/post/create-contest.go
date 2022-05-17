@@ -28,38 +28,48 @@ func CreateContest(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var contest Contest
 	
+	fmt.Println()
+	fmt.Println(util.DECODE_CONTEST)
+
 	err := decoder.Decode(&contest)
 	if err != nil {
-		fmt.Println("Error couldn't decode contest")
+		fmt.Println(util.DECODE_CONTEST_FAILED)
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(contest)
+	fmt.Println(util.DECODE_CONTEST_SUCCESS)
 
-	//Save to database
+	fmt.Println(util.CREATE_CONTEST_ID)
 	idHex := primitive.NewObjectID().Hex()
 	id, err := strconv.ParseInt(idHex[12:], 16, 64)
 	if err != nil {
-		println("error couldn't create id")
+		println(util.CONTEST_ID_FAILED)
 	}
 	contest.ContestId = int(id)
+	println(util.CONTEST_ID_SUCCESS + contest.ContestName)
 
+
+	fmt.Println(util.CREATING_DATABASE_CONNECTION)
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
 	if err != nil {
-		fmt.Println("Error in DB")
+		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		return
 	}
+	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
+
+	fmt.Println(util.PING_DATABASE)
 	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
 	if err != nil {
-		fmt.Println("Error in PING")
+		fmt.Println(util.PING)
 		return
 	}
-	result, err := dbconnection.InsertOne(util.DB_NAME, util.CONTESTS_COLLECTION, contest)
+
+	fmt.Println(util.INSERT_CONTEST)
+	_, err = dbconnection.InsertOne(util.DB_NAME, util.CONTESTS_COLLECTION, contest)
 	if err != nil {
-		fmt.Println("Error couldn't insert")
+		fmt.Println(util.INSERT_CONTEST_FAILED)
 	}
-	fmt.Println(result.InsertedID)
-	// contest.ID = result.InsertedID.(primitive.ObjectID).Hex()
+	fmt.Println(util.INSERT_CONTEST_SUCCESS + contest.ContestName)
 	json.NewEncoder(w).Encode(&contest)
 }
