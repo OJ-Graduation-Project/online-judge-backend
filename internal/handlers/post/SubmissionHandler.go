@@ -20,7 +20,8 @@ type DisplaySubmission struct {
 func SubmissionHandler(w http.ResponseWriter, r *http.Request) {
 
 	submissionID, _ := strconv.Atoi(mux.Vars(r)["id"])
-
+	
+	fmt.Println()
 	fmt.Println(util.CREATING_DATABASE_CONNECTION)
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
