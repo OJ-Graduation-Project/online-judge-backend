@@ -3,6 +3,7 @@ package post
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -28,10 +29,13 @@ type User struct {
 }
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
-	//Needed to bypass CORS headers
-
 	w.WriteHeader(http.StatusOK)
-	defer r.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(r.Body)
 	decoder := json.NewDecoder(r.Body)
 	var user User
 	err := decoder.Decode(&user)
@@ -39,24 +43,19 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error couldn't decode user")
 		return
 	}
-	fmt.Println(user)
-
 	//Adding to Database.
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
-
 	if err != nil {
 		fmt.Println("Error in DB")
 		log.Fatal(err)
 		return
 	}
-
 	cursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": user.Email}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")
 		log.Fatal(err)
 	}
-
 	var checkmail []bson.M
 	if err = cursor.All(dbconnection.Ctx, &checkmail); err != nil {
 		fmt.Println("Error in cursor")
@@ -65,8 +64,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(checkmail)
 	var errorUserExists bool
 	if len(checkmail) != 0 {
-		errorUserExists = true
-		json.NewEncoder(w).Encode(&errorUserExists)
+		json.NewEncoder(w).Encode(bson.M{"message": "User already exists!"})
 	} else {
 
 		idHex := primitive.NewObjectID().Hex()
