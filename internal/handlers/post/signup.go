@@ -1,9 +1,11 @@
 package post
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -38,7 +40,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	}(r.Body)
 	decoder := json.NewDecoder(r.Body)
 	var user User
-	
+
 	fmt.Println()
 	fmt.Println(util.DECODE_USER)
 	err := decoder.Decode(&user)
@@ -107,10 +109,75 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println(util.INSERT_USER_FAILED)
 			log.Fatal(err)
-		}else{
+		} else {
 			fmt.Println(util.INSERT_USER_SUCCESS)
 
 		}
 	}
+}
+func SignupImgHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("cookie")
+	if err != nil {
+		json.NewEncoder(w).Encode(bson.M{"message": "couldnt fetch cookie"})
+		return
+	}
+	authEmail, err := util.AuthenticateToken(cookie.Value)
+	if err != nil {
+		json.NewEncoder(w).Encode(bson.M{"message": "unauthenticated user"})
+		return
+	}
+	fmt.Println("COOKIE VALUE IS: ", cookie.Value, " AND EMAIL IS: ", authEmail)
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	fmt.Println("enteeer")
+	reader, err := r.MultipartReader()
 
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var partBytes []byte
+	for {
+		part, partErr := reader.NextPart()
+
+		// No more parts to process
+		if partErr == io.EOF {
+			break
+		}
+
+		// if part.FileName() is empty, skip this iteration.
+		if part.FileName() == "" {
+			continue
+		}
+
+		// Check file type
+		if part.Header["Content-Type"][0] != "image/jpeg" {
+			fmt.Printf("\nNot image/jpeg!")
+			break
+		}
+
+		partBytes, _ = ioutil.ReadAll(part)
+		size := uint64(len(partBytes))
+		blob := bytes.NewReader(partBytes)
+		fmt.Println(blob, " with size ", size)
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+	}
+	filter := bson.D{{"email", authEmail}}
+	update := bson.D{{"$set", bson.D{{"image", partBytes}}}}
+	dbconnection, err := db.CreateDbConn()
+	defer dbconnection.Cancel()
+
+	if err != nil {
+		fmt.Println("Error in DB")
+		log.Fatal(err)
+		return
+	}
+	dbconnection.UpdateOne(util.DB_NAME, util.USERS_COLLECTION, filter, update)
+
+	w.WriteHeader(http.StatusOK)
+	return
 }

@@ -1,6 +1,7 @@
 package post
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -23,7 +24,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 	var profile DisplayProfile
-	
+
 	fmt.Println()
 	fmt.Println(util.DECODE_USER)
 	err := decoder.Decode(&profile)
@@ -86,6 +87,88 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(util.RETURNING_USER)
 	json.NewEncoder(w).Encode(&returnedProfile[0])
+}
+
+func ProfileIMGHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("cookie", r.Cookies())
+
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Content-Type", "application/json")
+
+	w.WriteHeader(http.StatusOK)
+
+	defer r.Body.Close()
+
+	decoder := json.NewDecoder(r.Body)
+
+	var profile DisplayProfile
+	err := decoder.Decode(&profile)
+	if err != nil {
+		fmt.Println("Error couldn't decode profile")
+		log.Fatal(err)
+		return
+	}
+	fmt.Println("profile", profile)
+	fmt.Println("profile.userID ", profile.UserID)
+
+	cookie, err := r.Cookie("cookie")
+	if err != nil {
+		json.NewEncoder(w).Encode(bson.M{"message": "couldnt fetch cookie"})
+		return
+	}
+	authEmail, err := util.AuthenticateToken(cookie.Value)
+	if err != nil {
+		json.NewEncoder(w).Encode(bson.M{"message": "unauthenticated user"})
+		return
+	}
+	fmt.Println("COOKIE VALUE IS: ", cookie.Value, " AND EMAIL IS: ", authEmail)
+
+	dbconnection, err := db.CreateDbConn()
+	defer dbconnection.Cancel()
+	if err != nil {
+		fmt.Println("Error in DB")
+		log.Fatal(err)
+		return
+	}
+	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
+	if err != nil {
+		fmt.Println("Error in PING")
+		log.Fatal(err)
+		return
+	}
+	filterCursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": authEmail}, bson.M{})
+	if err != nil {
+		fmt.Println("Error in query")
+		log.Fatal(err)
+	}
+	fmt.Println(filterCursor, " filterCursor")
+	var returnedProfile []bson.M
+	if err = filterCursor.All(dbconnection.Ctx, &returnedProfile); err != nil {
+		fmt.Println("Error in cursor")
+		log.Fatal(err)
+	}
+	if len(returnedProfile) == 0 {
+		fmt.Println("CURSOR IS EMPTY")
+		return
+	}
+
+	var img []byte
+	//var File multipart.File
+	for _, doc := range returnedProfile {
+		for key, value := range doc {
+			fmt.Println("key and value ", key, value)
+			if key == "image" {
+				img = value.([]byte)
+			}
+		}
+	}
+	blob := bytes.NewReader(img)
+	fmt.Println(blob, " img")
+
+	json.NewEncoder(w).Encode(bson.M{"image": blob})
+
 }
 
 func str(profile DisplayProfile) {

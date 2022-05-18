@@ -18,6 +18,7 @@ func LoadRoutes() *mux.Router {
 	router.HandleFunc(fmt.Sprintf("%s/login", subPath), post.LoginHandler)
 	router.HandleFunc(fmt.Sprintf("%s/logout", subPath), post.LogoutHandler)
 	router.HandleFunc(fmt.Sprintf("%s/sign-up", subPath), post.SignupHandler)
+	router.HandleFunc(fmt.Sprintf("%s/sign-up-img", subPath), post.SignupImgHandler)
 	router.HandleFunc(fmt.Sprintf("%s/home", subPath), post.GetProblems)
 	router.HandleFunc(fmt.Sprintf("%s/create-problem", subPath), post.CreateProblem)
 	router.HandleFunc(fmt.Sprintf("%s/create-contest", subPath), post.CreateContest)
@@ -32,6 +33,7 @@ func LoadRoutes() *mux.Router {
 	router.HandleFunc(fmt.Sprintf("%s/topic", subPath), post.TopicHandler)
 	router.HandleFunc(fmt.Sprintf("%s/all-contests/contest/{contestName}/problem/{problemName}", subPath), get.ProblemHandler)
 	router.HandleFunc(fmt.Sprintf("%s/profile", subPath), post.ProfileHandler).Methods("POST")
+	router.HandleFunc(fmt.Sprintf("%s/profile-img", subPath), post.ProfileIMGHandler).Methods("POST")
 
 	return router
 }
