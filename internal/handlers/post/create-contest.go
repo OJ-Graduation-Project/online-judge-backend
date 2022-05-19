@@ -16,9 +16,8 @@ type Contest struct {
 	ContestName        string `json:"contestName"`
 	ContestStartDate   string `json:"contestStartDate"` //make date later
 	ContestEndDate     string `json:"contestEndDate"`   //make date later
-	Contest_problemset []string  `json:"contestProblemSet"`
-	ProblemsScore []int  `json:"problemsScore"`
-
+	Contest_problemset []int  `json:"contestProblemSet"`
+	ProblemsScore      []int  `json:"problemsScore"`
 }
 
 func CreateContest(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +26,7 @@ func CreateContest(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	var contest Contest
-	
+
 	fmt.Println()
 	fmt.Println(util.DECODE_CONTEST)
 
@@ -47,7 +46,6 @@ func CreateContest(w http.ResponseWriter, r *http.Request) {
 	}
 	contest.ContestId = int(id)
 	println(util.CONTEST_ID_SUCCESS + contest.ContestName)
-
 
 	fmt.Println(util.CREATING_DATABASE_CONNECTION)
 	dbconnection, err := db.CreateDbConn()

@@ -3,10 +3,11 @@ package post
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
@@ -84,9 +85,9 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 		if !ok {
 			val_double := users[0]["_id"].(float64)
 			resp.UserId = int(val_double)
+		} else {
+			resp.UserId = int(val_int)
 		}
-		resp.UserId = int(val_int)
-
 		resp.Score = ans[i].Score
 		response = append(response, resp)
 
