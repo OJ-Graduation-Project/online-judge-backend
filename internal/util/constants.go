@@ -19,6 +19,10 @@ const (
     COOKIE                          = "[LOG] Error in getting Cookie!"
     EMPTY_PROBLEM                   = "[LOG] No such Problem exists in the database with name: "
     EMPTY_CONTEST                   = "[LOG] No such Contest exists in the database with name: "
+    EMPTY_CONTESTS                  = "[LOG] No Contests exist in the system yet!"
+    EMPTY_USER_PROBLEMS             = "[LOG] No Created Problems for this user yet!"
+    EMPTY_USER_SUBMISSIONS          = "[LOG] No Submissions for this user yet!"
+
     SUBMISSION_ERROR                = "[LOG] Error no such Submission exists!"
     USER_NOT_FOUND                  = "[LOG] Error no such User exists!"
 

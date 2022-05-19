@@ -39,6 +39,11 @@ func GetAllContests(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
+	if len(contests) == 0 {
+		fmt.Println(util.EMPTY_CONTESTS)
+		json.NewEncoder(w).Encode(bson.M{"message": util.EMPTY_CONTESTS})
+		return
+	}
 	fmt.Println(util.RETURNING_ALL_CONTESTS)
 	json.NewEncoder(w).Encode(&contests)
 
