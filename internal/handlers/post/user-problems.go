@@ -55,6 +55,11 @@ func GetUserProblems(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(util.CURSOR)
 		log.Fatal(err)
 	}
+	if len(problems) == 0 {
+		fmt.Println(util.EMPTY_USER_PROBLEMS)
+		json.NewEncoder(w).Encode(bson.M{"message": util.EMPTY_USER_PROBLEMS})
+		return
+	}
 	fmt.Println(util.RETURNING_USER_PROBLEMS)
 	json.NewEncoder(w).Encode(&problems)
 }

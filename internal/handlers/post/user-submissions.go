@@ -56,6 +56,11 @@ func GetUserSubmissions(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(util.CURSOR)
 		log.Fatal(err)
 	}
+	if len(submissions) == 0 {
+		fmt.Println(util.EMPTY_USER_SUBMISSIONS)
+		json.NewEncoder(w).Encode(bson.M{"message": util.EMPTY_USER_SUBMISSIONS})
+		return
+	}
 	fmt.Println(util.RETURNING_USER_SUBMISSIONS)
 	json.NewEncoder(w).Encode(&submissions)
 }
