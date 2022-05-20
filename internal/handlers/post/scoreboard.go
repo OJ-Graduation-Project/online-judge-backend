@@ -38,20 +38,20 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()
-	decoder := json.NewDecoder(r.Body)
-
+	contestName, _ := mux.Vars(r)["contestName"]
 	limit, _ := strconv.Atoi(mux.Vars(r)["limit"])
 	pagenumber, _ := strconv.Atoi(mux.Vars(r)["page"])
 
-	var scorereq ScoreRequest
-	err := decoder.Decode(&scorereq)
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
 	dbconnection, err := db.CreateDbConn()
+	if err != nil {
+		fmt.Println("Error in database connection")
+	}
 	defer dbconnection.Cancel()
-	contestID := FindContestByName(dbconnection, scorereq.ContestName)[0]["_id"].(int)
+
+	fmt.Println("IAM HERE", contestName, limit, pagenumber)
+	fmt.Println(r.URL)
+
+	contestID := int(FindContestByName(dbconnection, contestName)[0]["_id"].(int64))
 	ctst := contest.GetInstance().GetContest(contestID)
 
 	if limit > ctst.Board.Count() {
