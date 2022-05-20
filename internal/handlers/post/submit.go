@@ -172,6 +172,7 @@ func FetchProblemByID(problemID int, database string, col string, db db.DbConnec
 		fmt.Println(err)
 		return entities.Problem{}, err
 	}
+	fmt.Println("result is : ",result)
 	return result, nil
 }
 

@@ -44,7 +44,6 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 	println(util.PROBLEM_ID_SUCCESS + problem.Name)
 
 
-	problem.NumberOfSubmissions = -1
 	for i := 0; i < len(problem.Testcases); i++ {
 		problem.Testcases[i].ProblemID = problem.ID
 	}

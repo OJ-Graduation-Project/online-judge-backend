@@ -1,7 +1,6 @@
 [{
 	"_id": 1,
 	"problemName": "Two Sum",
-	"numberOfSubmissions": 1,
 	"writerId": 789,
 	"description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\nYou can return the answer in any order.",
 	"timeLimit": "200 ms",
@@ -23,14 +22,12 @@
 		"input": "2\n3 3\n6",
 		"output": "0 1"
 	}],
-	"problemSubmissionsId":[12],
-	"topic":["Array","Hash Table"]
+	"topic":"Hash Table"
 
 },
 {
 	"_id": 58,
 	"problemName": "Length of Last Word",
-	"numberOfSubmissions": 1,
 	"writerId": 789,
 	"description": "Given a string s consisting of some words separated by some number of spaces, return the length of the last word in the string. A word is a maximal substring consisting of non-space characters only.",
 	"timeLimit": "200 ms",
@@ -64,15 +61,13 @@
 		"input": "go to college",
 		"output": "7"
 	}],
-	"problemSubmissionsId":[34],
-	"topic":["String"]
+	"topic":"String"
 
 },
 
 {
 	"_id": 371,
 	"problemName": "Sum of Two Integers",
-	"numberOfSubmissions": 1,
 	"writerId": 789,
 	"description": "Given two integers a and b, return the sum of the two integers without using the operators + and -.",
 	"timeLimit": "200 ms",
@@ -105,15 +100,13 @@
 		"output": "7"
 	}
 ],
-	"problemSubmissionsId":[],
-	"topic":["Maths"]
+	"topic":"Maths"
 
 
 },
 {
 	"_id": 363,
 	"problemName": "Reverse string",
-	"numberOfSubmissions": 1,
 	"writerId": 789,
 	"description": "Write a function that reverses a string. The input string is given as an array of characters s.\nYou must do this by modifying the input array in-place with O(1) extra memory.",
 	"timeLimit": "500 ms",
@@ -130,7 +123,6 @@
 		"input": "Hannah",
 		"output": "hannaH"
 	}],
-	"problemSubmissionsId":[56,78],
-	"topic":["String","Two Pointers","Recursion"]
+	"topic":"Recursion"
 
 }]
