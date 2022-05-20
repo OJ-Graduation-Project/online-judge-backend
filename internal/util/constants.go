@@ -22,6 +22,7 @@ const (
     EMPTY_CONTESTS                  = "[LOG] No Contests exist in the system yet!"
     EMPTY_USER_PROBLEMS             = "[LOG] No Created Problems for this user yet!"
     EMPTY_USER_SUBMISSIONS          = "[LOG] No Submissions for this user yet!"
+    EMPTY_TOPIC_PROBLEMS            = "[LOG] No Problems exist for this topic yet!"
 
     SUBMISSION_ERROR                = "[LOG] Error no such Submission exists!"
     USER_NOT_FOUND                  = "[LOG] Error no such User exists!"
