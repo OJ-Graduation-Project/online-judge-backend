@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/config"
-	"github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/routes"
 )
 
@@ -37,8 +36,8 @@ func main() {
 	config.LoadEnv(envFilePath)
 	config.LoadConfig(configFilePath)
 	//Test contest and test submissions.
-	all := contest.GetInstance()
-	all.GetContestAndStart(1)
+	//all := contest.GetInstance()
+	//all.GetContestAndStart(1)
 
 	router := routes.LoadRoutes()
 	router.Use(routes.Middleware)
