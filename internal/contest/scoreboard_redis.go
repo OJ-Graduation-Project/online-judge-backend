@@ -4,31 +4,28 @@ import (
 	"strconv"
 
 	// "sort"
-	"fmt"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/datastructures/pair"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/redis_pool"
-	"github.com/emirpasic/gods/maps/hashmap"
 	"github.com/gomodule/redigo/redis"
 	"github.com/pkg/math"
 )
 
-var scoreboardMap string
-var problemsMap string
+var scoreboardMap string = "scoreboardMap"
+var problemsMap string = "problemsMap"
 
 type ScoreBoardRedis struct {
-	Board                pair.PairList
-	UserMaxProblemsScore *hashmap.Map
-	RedisClient 	  	 redis.Conn
+	RedisClient   redis.Conn
+	problemsScore pair.PairList
 }
 
-func NewScoreBoardRedis() *ScoreBoardRedis {
-	return &ScoreBoardRedis{make([]*pair.Pair, 0), hashmap.New(), redis_pool.NewPool().Get(),}
+func NewScoreBoardRedis(problemsScore pair.PairList) *ScoreBoardRedis {
+	return &ScoreBoardRedis{redis_pool.NewPool().Get(), problemsScore}
 }
 
-func (s *ScoreBoardRedis) AddProblemScore(userId, problemIndex int) {
-	
-	key := strconv.Itoa(userId) + ", " + strconv.Itoa(problemIndex)
+func (s *ScoreBoardRedis) AddProblemScore(userId, problemId int) {
+
+	key := strconv.Itoa(userId) + ", " + strconv.Itoa(problemId)
 	reply, err := s.RedisClient.Do("HGET", problemsMap, key)
 	if err != nil {
 		panic(err.Error())
@@ -47,45 +44,34 @@ func (s *ScoreBoardRedis) AddProblemScore(userId, problemIndex int) {
 	if err != nil {
 		panic(err.Error())
 	}
-	
+
 }
 
 func (s *ScoreBoardRedis) Initialize(userIds, problemsScore []int) {
-	scoreboardMap = fmt.Sprintf("scoreboard%p", s)
-	problemsMap = fmt.Sprintf("problemsscores%p", s)
-	fmt.Println(scoreboardMap, problemsMap)
-	
-	s.RedisClient.Do("ZREMRANGEBYSCORE", scoreboardMap, "-inf", "inf")
-
-	for _, userId := range userIds {
-		tmp := make([]int, len(problemsScore))
-		copy(tmp, problemsScore)
-		s.UserMaxProblemsScore.Put(userId, tmp)
-		s.Board = append(s.Board, pair.New(0, userId))
-	}
 
 	for _, userId := range userIds {
 		s.RedisClient.Do("ZADD", scoreboardMap, 0, strconv.Itoa(userId))
-		for problemIndex, maxProblemScore := range problemsScore {
-			key := strconv.Itoa(userId) + ", " + strconv.Itoa(problemIndex)
+		for _, problemData := range s.problemsScore {
+			problemId, maxProblemScore := problemData.Id, problemData.Score
+			key := strconv.Itoa(userId) + ", " + strconv.Itoa(problemId)
 			s.RedisClient.Do("HSET", problemsMap, key, strconv.Itoa(maxProblemScore))
 		}
 	}
-	
+
 }
 
-func (s *ScoreBoardRedis) DecreaseProblemScore(userId, problemIndex, value int) {
-	key := strconv.Itoa(userId) + ", " + strconv.Itoa(problemIndex)
-	
+func (s *ScoreBoardRedis) DecreaseProblemScore(userId, problemId, value int) {
+	key := strconv.Itoa(userId) + ", " + strconv.Itoa(problemId)
+
 	_, err := s.RedisClient.Do("HINCRBY", problemsMap, key, strconv.Itoa(-value))
 	if err != nil {
 		panic(err.Error())
 	}
-	
+
 }
 
 func (s *ScoreBoardRedis) Get(startIndex, count int) pair.PairList {
-	
+
 	startIndex--
 	endIndex := startIndex + count - 1
 	value, _ := redis.Ints(s.RedisClient.Do("ZREVRANGE", scoreboardMap, strconv.Itoa(startIndex), strconv.Itoa(endIndex), "WITHSCORES"))
@@ -94,10 +80,26 @@ func (s *ScoreBoardRedis) Get(startIndex, count int) pair.PairList {
 	for i, j := 0, 0; i < len(value); i, j = i+2, j+1 {
 		x[j] = pair.New(value[i+1], value[i])
 	}
-	
+
 	return x
 }
 
 func (s *ScoreBoardRedis) Count() int {
-	return s.UserMaxProblemsScore.Size()
+	size, _ := redis.Int(s.RedisClient.Do("ZCOUNT", scoreboardMap, "-inf", "inf"))
+	return size
+}
+
+func (s *ScoreBoardRedis) Register(userId int) {
+	s.RedisClient.Do("ZADD", scoreboardMap, 0, strconv.Itoa(userId))
+	for _, problemData := range s.problemsScore {
+		problemId, maxProblemScore := problemData.Id, problemData.Score
+		key := strconv.Itoa(userId) + ", " + strconv.Itoa(problemId)
+		s.RedisClient.Do("HSET", problemsMap, key, strconv.Itoa(maxProblemScore))
+	}
+}
+
+func (s *ScoreBoardRedis) IsRegistered(userId int) bool {
+	key := strconv.Itoa(userId) + ", " + strconv.Itoa(s.problemsScore[0].Id)
+	exist, _ := redis.Int(s.RedisClient.Do("HEXISTS", problemsMap, key))
+	return exist == 1
 }

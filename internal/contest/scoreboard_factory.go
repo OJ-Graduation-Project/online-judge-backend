@@ -11,8 +11,9 @@ func NewScoreBoard(s string) ScoreBoardInterface {
 		return NewFastScoreBoard()
 	} else if s == SLOW {
 		return NewSlowScoreBoard()
-	} else if s == REDIS {
-		return NewScoreBoardRedis()
-	}
+	} 
+	// else if s == REDIS {
+	// 	return NewScoreBoardRedis()
+	// }
 	return nil
 }

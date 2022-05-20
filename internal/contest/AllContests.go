@@ -41,24 +41,24 @@ func (all AllCont) GetContest(id int) *Contest {
 	return contest
 }
 
-func (all AllCont) GetContestAndStart(contestid int) {
+func (all AllCont) GetContestAndStart(contestid int64) {
 	dbconnection, err := db.CreateDbConn()
 	defer dbconnection.Cancel()
 	if err != nil {
 		fmt.Println("Error couldn't connect to database")
 	}
-	cursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{
-		"_id": contestid,
-	}, bson.M{})
+	cursor, err := dbconnection.Query(util.DB_NAME, util.CONTESTS_COLLECTION, bson.M{"_id": contestid}, bson.M{})
 	if err != nil {
-		fmt.Println("Error in query")
+		fmt.Println(err.Error())
 		log.Fatal(err)
+
 	}
 	var contests []bson.M
 	if err = cursor.All(dbconnection.Ctx, &contests); err != nil {
 		fmt.Println("Error in cursor")
 		log.Fatal(err)
 	}
+
 	if len(contests) > 1 {
 		fmt.Printf("Error more than one Contest with the same ID")
 	}
@@ -66,18 +66,17 @@ func (all AllCont) GetContestAndStart(contestid int) {
 	var ctstData Contest
 	bsonBytes, _ := bson.Marshal(contests[0])
 	bson.Unmarshal(bsonBytes, &ctstData)
-
-	ctstData.Start("fast")
+	fmt.Println(ctstData)
+	ctstData.Start("redis")
 	instantiated.AddContest(&ctstData)
-
-	//Mock submissions
-	instantiated.AddContest(&ctstData)
-
-	//ctstData.AcceptedSubmission(1629, 371)
-	ctstData.WrongSubmission(265, 371)
-	ctstData.WrongSubmission(265, 371)
-	ctstData.WrongSubmission(265, 371)
-	ctstData.AcceptedSubmission(265, 371)
-	ctstData.AcceptedSubmission(11, 371)
-
+	ctstData.Register(142995735221726)
+	fmt.Println(ctstData.DisplayAllRanks())
+	ctstData.AcceptedSubmission(142995735221726, 142995735221729)
+	fmt.Println(ctstData.DisplayAllRanks())
+	ctstData.AcceptedSubmission(142995735221726, 142995735221733)
+	fmt.Println(ctstData.DisplayAllRanks())
+	ctstData.AcceptedSubmission(142995735221726, 142995735221744)
+	fmt.Println(ctstData.DisplayAllRanks())
+	ctstData.AcceptedSubmission(142995735221726, 142995735221748)
+	fmt.Println(ctstData.DisplayAllRanks())
 }

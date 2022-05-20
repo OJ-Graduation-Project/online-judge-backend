@@ -2,7 +2,7 @@ package pair
 
 type Pair struct {
 	Score int
-	User  int
+	Id    int
 }
 
 func New(score, user int) *Pair {
@@ -19,7 +19,7 @@ func (s PairList) Swap(i, j int) {
 }
 func (s PairList) Less(i, j int) bool {
 	if s[i].Score == s[j].Score {
-		return s[i].User < s[j].User
+		return s[i].Id < s[j].Id
 	}
 	return s[i].Score > s[j].Score
 }

@@ -128,3 +128,7 @@ func (s *ScoreBoard) Get(startIndex, count int) pair.PairList {
 func (s *ScoreBoard) Count() int {
 	return s.UserToScore.Size()
 }
+
+func (s *ScoreBoard) Register(userId int) {
+
+}

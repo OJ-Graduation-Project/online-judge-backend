@@ -25,7 +25,7 @@ func (s *ScoreBoard_) AddProblemScore(userId, problemIndex int) {
 	problemScores[problemIndex] = 0
 
 	for i := 0; i < len(s.Board); i++ {
-		if s.Board[i].User == userId {
+		if s.Board[i].Id == userId {
 			s.Board[i].Score += increase_in_score
 			break
 		}
@@ -66,4 +66,8 @@ func (s *ScoreBoard_) Get(startIndex, count int) pair.PairList {
 
 func (s *ScoreBoard_) Count() int {
 	return len(s.Board)
+}
+
+func (s *ScoreBoard_) Register(userId int) {
+
 }

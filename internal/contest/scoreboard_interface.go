@@ -10,4 +10,5 @@ type ScoreBoardInterface interface {
 	DecreaseProblemScore(user, problemIndex, value int)
 	Get(start_index, count int) pair.PairList
 	Count() int
+	Register(userId int)
 }
