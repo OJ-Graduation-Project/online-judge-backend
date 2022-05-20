@@ -124,6 +124,9 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
 
 	fmt.Println(util.INSERT_PROBLEM)
+	fmt.Println(util.INSERT_PROBLEM)
+
+
 	_, err = dbconnection.InsertOne(util.DB_NAME, util.PROBLEMS_COLLECTION, problem)
 	if err != nil {
 		fmt.Println(util.INSERT_PROBLEM_FAILED)
