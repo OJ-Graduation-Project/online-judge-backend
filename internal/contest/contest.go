@@ -21,32 +21,29 @@ type Contest struct {
 	RegisteredUserIds       []int     `bson:"registeredUsersId,omitempty" json:"registeredUserId,omitempty"`
 	ProblemsScore           []int     `bson:"problemsscore,omitempty" json:"problemsScore,omitempty"`
 	WrongSubmissionCost     int       `bson:"wrongSubmissionCost,omitempty" json:"wrongSubmissionCost,omitempty"`
-	Board                   ScoreBoardInterface
+	Board                   *ScoreBoardRedis
 	ProblemIdToIndex        *hashmap.Map
 }
 
 func (c *Contest) Start(scoreBoardType string) {
+	problemsScore := make(pair.PairList, len(c.ProblemsScore))
 
-	c.ProblemIdToIndex = hashmap.New()
-
-	for i, v := range c.ContestProblemIds {
-		c.ProblemIdToIndex.Put(v, i)
+	for i, _ := range c.ContestProblemIds {
+		problemsScore[i] = pair.New(c.ProblemsScore[i], c.ContestProblemIds[i])
 	}
 
-	c.Board = NewScoreBoard(scoreBoardType)
-	c.Board.Initialize(c.RegisteredUserIds, c.ProblemsScore)
+	c.Board = NewScoreBoardRedis(problemsScore)
+
 }
 
 func (c *Contest) AcceptedSubmission(userId, problemId int) {
-	z0, _ := c.ProblemIdToIndex.Get(problemId)
-	problemIndex := z0.(int)
-	c.Board.AddProblemScore(userId, problemIndex)
+	c.Register(userId)
+	c.Board.AddProblemScore(userId, problemId)
 }
 
 func (c *Contest) WrongSubmission(userId, problemId int) {
-	z0, _ := c.ProblemIdToIndex.Get(problemId)
-	problemIndex := z0.(int)
-	c.Board.DecreaseProblemScore(userId, problemIndex, c.WrongSubmissionCost)
+	c.Register(userId)
+	c.Board.DecreaseProblemScore(userId, problemId, c.WrongSubmissionCost)
 }
 
 func (c *Contest) GetRanks(start, count int) pair.PairList {
@@ -59,7 +56,7 @@ func (c *Contest) DisplayRanks(start, count int) string {
 	sort.Sort(a) // This line can be removed if we don't care about how will we break ties
 	for i, p := range a {
 		j := start + i
-		result.WriteString(fmt.Sprintf("\n%v %v %v\n", j, p.User, p.Score))
+		result.WriteString(fmt.Sprintf("\n%v %v %v\n", j, p.Id, p.Score))
 	}
 	return result.String()
 }
@@ -70,4 +67,9 @@ func (c *Contest) GetAllRanks() pair.PairList {
 
 func (c *Contest) DisplayAllRanks() string {
 	return c.DisplayRanks(1, c.Board.Count())
+}
+func (c *Contest) Register(userId int) {
+	if !c.Board.IsRegistered(userId) {
+		c.Board.Register(userId)
+	}
 }

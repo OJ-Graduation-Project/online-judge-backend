@@ -64,15 +64,15 @@ func ScoreBoardHandler(w http.ResponseWriter, r *http.Request) {
 	var userids []int
 
 	for i := 0; i < ans.Len(); i++ {
-		userids = append(userids, ans[i].User)
-		mp[ans[i].User] = ans[i].Score
+		userids = append(userids, ans[i].Id)
+		mp[ans[i].Id] = ans[i].Score
 	}
 	var response []ScoreResponse
 	var resp ScoreResponse
 
 	for i := 0; i < ans.Len(); i++ {
 		cursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{
-			"_id": ans[i].User,
+			"_id": ans[i].Id,
 		}, bson.M{})
 		var users []bson.M
 		if err = cursor.All(dbconnection.Ctx, &users); err != nil {
