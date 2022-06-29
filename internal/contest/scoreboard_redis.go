@@ -1,6 +1,7 @@
 package contest
 
 import (
+	"fmt"
 	"strconv"
 
 	// "sort"
@@ -100,6 +101,9 @@ func (s *ScoreBoardRedis) Register(userId int) {
 
 func (s *ScoreBoardRedis) IsRegistered(userId int) bool {
 	key := strconv.Itoa(userId) + ", " + strconv.Itoa(s.problemsScore[0].Id)
-	exist, _ := redis.Int(s.RedisClient.Do("HEXISTS", problemsMap, key))
+	exist, err := redis.Int(s.RedisClient.Do("HEXISTS", problemsMap, key))
+	if err != nil {
+		fmt.Println(err)
+	}
 	return exist == 1
 }

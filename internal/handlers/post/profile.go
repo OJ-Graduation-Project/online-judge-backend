@@ -165,7 +165,7 @@ func ProfileIMGHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	blob := bytes.NewReader(img)
-	//fmt.Println(blob, " img")
+	// fmt.Println(blob, " img")
 
 	json.NewEncoder(w).Encode(bson.M{"image": blob})
 

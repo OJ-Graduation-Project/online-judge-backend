@@ -27,7 +27,9 @@ type Contest struct {
 
 func (c *Contest) Start(scoreBoardType string) {
 	problemsScore := make(pair.PairList, len(c.ProblemsScore))
-
+	if c.WrongSubmissionCost == 0 {
+		c.WrongSubmissionCost = 10
+	}
 	for i, _ := range c.ContestProblemIds {
 		problemsScore[i] = pair.New(c.ProblemsScore[i], c.ContestProblemIds[i])
 	}
@@ -69,6 +71,9 @@ func (c *Contest) DisplayAllRanks() string {
 	return c.DisplayRanks(1, c.Board.Count())
 }
 func (c *Contest) Register(userId int) {
+	fmt.Println("User Id is ", userId)
+
+	fmt.Println(c.Board)
 	if !c.Board.IsRegistered(userId) {
 		c.Board.Register(userId)
 	}

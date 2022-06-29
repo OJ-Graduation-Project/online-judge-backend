@@ -66,17 +66,8 @@ func (all AllCont) GetContestAndStart(contestid int64) {
 	var ctstData Contest
 	bsonBytes, _ := bson.Marshal(contests[0])
 	bson.Unmarshal(bsonBytes, &ctstData)
-	fmt.Println(ctstData)
 	ctstData.Start("redis")
+	fmt.Println(ctstData.Board)
 	instantiated.AddContest(&ctstData)
-	ctstData.Register(142995735221726)
-	fmt.Println(ctstData.DisplayAllRanks())
-	ctstData.AcceptedSubmission(142995735221726, 142995735221729)
-	fmt.Println(ctstData.DisplayAllRanks())
-	ctstData.AcceptedSubmission(142995735221726, 142995735221733)
-	fmt.Println(ctstData.DisplayAllRanks())
-	ctstData.AcceptedSubmission(142995735221726, 142995735221744)
-	fmt.Println(ctstData.DisplayAllRanks())
-	ctstData.AcceptedSubmission(142995735221726, 142995735221748)
-	fmt.Println(ctstData.DisplayAllRanks())
+	
 }
