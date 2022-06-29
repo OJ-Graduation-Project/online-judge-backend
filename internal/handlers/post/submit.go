@@ -67,7 +67,11 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(util.FETCH_PROBLEM_ID_FAILED)
 	}
-	contestid, _ := strconv.Atoi(submissionRequest.ContestId)
+	fmt.Println(submissionRequest.ContestId)
+	var contestid int
+	if submissionRequest.IsContest {
+		contestid = int(FindContestByName(dbconnection, submissionRequest.ContestId)[0]["_id"].(int64))
+	}
 	//submission Id needs to be different each time.
 	fmt.Println(util.COMPILE)
 	verdict, failedTestCaseNumber, userOutput := compile.CompileAndRun(strconv.Itoa(1), problem.Testcases, submissionRequest.Code, submissionRequest.Language)
@@ -95,6 +99,8 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	if verdict == "Correct" && submissionRequest.IsContest {
 		fmt.Println(util.CONTEST_AND_CORRECT)
 		accepted = true
+		fmt.Println("Contest ID: ", contestid, userid, submissionRequest.ProblemID)
+		fmt.Println(contest.GetInstance().GetContest(contestid).Board)
 		contest.GetInstance().GetContest(contestid).AcceptedSubmission(userid, submissionRequest.ProblemID)
 	}
 

@@ -151,10 +151,16 @@ func SignupImgHandler(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
+		// Check file type
+		// if part.Header["Content-Type"][0] != "image/jpeg" {
+		// 	fmt.Printf("\nNot image/jpeg!")
+		// 	break
+		// }
+
 		partBytes, _ = ioutil.ReadAll(part)
-		//size := uint64(len(partBytes))
-		//blob := bytes.NewReader(partBytes)
-		//fmt.Println(blob, " with size ", size)
+		// size := uint64(len(partBytes))
+		// blob := bytes.NewReader(partBytes)
+		// fmt.Println(blob, " with size ", size)
 		if err != nil {
 			fmt.Println(err)
 			break

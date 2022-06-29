@@ -77,20 +77,23 @@ func GetAllContests(w http.ResponseWriter, r *http.Request) {
 		currContest.ContestId = int(contests[i]["_id"].(int64))
 		currContest.ContestName = contests[i]["contestname"].(string)
 		currContest.ContestStartDate = contests[i]["conteststartdate"].(string)
-		var registeredUsers []int
-		for j := 0; j < len(contests[i]["registeredUsersId"].(primitive.A)); j++ {
+		var registeredUsers []int = make([]int, 0)
+		if contests[i]["registeredUsersId"] != nil {
+			for j := 0; j < len(contests[i]["registeredUsersId"].(primitive.A)); j++ {
 
-			var curr_id int
+				var curr_id int
 
-			val_int32, ok := contests[i]["registeredUsersId"].(primitive.A)[j].(int32)
-			if !ok {
-				val_int64 := contests[i]["registeredUsersId"].(primitive.A)[j].(int64)
-				curr_id = int(val_int64)
-			} else {
-				curr_id = int(val_int32)
+				val_int32, ok := contests[i]["registeredUsersId"].(primitive.A)[j].(int32)
+				if !ok {
+					val_int64 := contests[i]["registeredUsersId"].(primitive.A)[j].(int64)
+					curr_id = int(val_int64)
+				} else {
+					curr_id = int(val_int32)
+				}
+				registeredUsers = append(registeredUsers, curr_id)
 			}
-			registeredUsers = append(registeredUsers, curr_id)
 		}
+
 		currContest.RegisteredUserIds = registeredUsers
 		allcontestsData = append(allcontestsData, currContest)
 	}
