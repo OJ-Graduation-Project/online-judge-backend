@@ -92,7 +92,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(bson.M{
 				"user": &returnedUser[0],
 			})
-			w.WriteHeader(http.StatusOK)
+			// w.WriteHeader(http.StatusOK)
 			return
 		} else {
 			fmt.Println(util.INCORRECT_PASSWORD)
