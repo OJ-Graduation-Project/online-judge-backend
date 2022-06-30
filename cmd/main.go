@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/config"
-	"github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
+
+	// "github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/routes"
 )
 
@@ -15,7 +18,7 @@ func main() {
 
 	// env file path
 	var envFilePath string
-
+	os.Stdout = nil
 	flag.StringVar(
 		&envFilePath,
 		"env",
@@ -37,9 +40,14 @@ func main() {
 	config.LoadEnv(envFilePath)
 	config.LoadConfig(configFilePath)
 
-	all := contest.GetInstance()
-	all.GetContestAndStart(142995735221753)
+	// all := contest.GetInstance()
+	// all.GetContestAndStart(142995735221753)
 
+	var err error
+	db.DbConn, err = db.CreateDbConn()
+	if err != nil {
+		fmt.Print(err)
+	}
 	router := routes.LoadRoutes()
 	router.Use(routes.Middleware)
 	server_uri := fmt.Sprintf("%s:%s", config.AppConfig.Server.Host, config.AppConfig.Server.Port)

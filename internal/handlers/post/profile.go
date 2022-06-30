@@ -62,12 +62,7 @@ func ProfileHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
 
 	fmt.Println(util.PING_DATABASE)
-	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
-	if err != nil {
-		fmt.Println(util.PING)
-		log.Fatal(err)
-		return
-	}
+
 	fmt.Println(util.FETCHING_USER_FROM_EMAIL + authEmail)
 	filterCursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": authEmail}, bson.M{})
 	if err != nil {
@@ -132,12 +127,7 @@ func ProfileIMGHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 		return
 	}
-	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
-	if err != nil {
-		fmt.Println("Error in PING")
-		log.Fatal(err)
-		return
-	}
+
 	filterCursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": authEmail}, bson.M{})
 	if err != nil {
 		fmt.Println("Error in query")

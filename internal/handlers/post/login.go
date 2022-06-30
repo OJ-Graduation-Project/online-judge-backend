@@ -3,13 +3,14 @@ package post
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
+
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
-	"io"
-	"log"
-	"net/http"
 )
 
 type LoginUser struct {
@@ -20,7 +21,7 @@ type LoginUser struct {
 func HashPassword(password string) string {
 
 	fmt.Println(util.HASHING_PASSWORD)
-	pwSlice, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	pwSlice, err := bcrypt.GenerateFromPassword([]byte(password), 1)
 	if err != nil {
 		fmt.Println(util.HASHING_PASSWORD_FAILED)
 	}
@@ -48,14 +49,16 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(util.DECODE_USER_SUCCESS)
 
 	fmt.Println(util.CREATING_DATABASE_CONNECTION)
-	dbConnection, err := db.CreateDbConn()
+	// dbConnection, err := db.CreateDbConn()
+	dbConnection := db.DbConn
+
 	if err != nil {
 		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		panic(err)
 	}
 	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
 
-	defer dbConnection.CloseSession()
+	// defer dbConnection.CloseSession()
 
 	fmt.Println(util.FETCHING_USER_FROM_EMAIL + loginUser.Email)
 	cursor, err := dbConnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": loginUser.Email}, bson.M{})
@@ -73,7 +76,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if len(returnedUser) == 1 {
 		fmt.Println(util.COMPARE_HASH)
-		if err := bcrypt.CompareHashAndPassword([]byte(returnedUser[0]["password"].(string)), []byte(loginUser.Password)); err == nil {
+		if returnedUser[0]["password"].(string) == loginUser.Password {
 			token := util.CreateToken(returnedUser[0]["email"].(string))
 			cookie := &http.Cookie{
 				Name:     "cookie",

@@ -12,5 +12,5 @@ type Problem struct {
 	Difficulty            string     `json:"difficulty,omitempty" bson:"difficulty,omitempty"`
 	ProblemSubmissionsIDs []int      `json:"problemSubmissionsId,omitempty" bson:"problemSubmissionsId,omitempty"`
 	SolutionCode          string     `json:"solutionCode,omitempty" bson:"solutionCode,omitempty"`
-	Topic              string     	`json:"topic,omitempty" bson:"topic,omitempty"`
+	Topic                 []string   `json:"topic,omitempty" bson:"topic,omitempty"`
 }

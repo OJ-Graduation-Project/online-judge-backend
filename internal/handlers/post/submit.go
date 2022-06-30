@@ -61,7 +61,8 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	//get testcases
 	// testcases := fetchdummyTestCase(submissionRequest.ProblemID)
 	fmt.Println(util.CREATING_DATABASE_CONNECTION)
-	dbconnection, err := db.CreateDbConn()
+	// dbconnection, err := db.CreateDbConn()
+	dbconnection := db.DbConn
 	fmt.Println(util.FETCHING_PROBLEM_ID)
 	problem, err := FetchProblemByID(submissionRequest.ProblemID, util.DB_NAME, util.PROBLEMS_COLLECTION, dbconnection)
 	if err != nil {
@@ -74,7 +75,7 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	}
 	//submission Id needs to be different each time.
 	fmt.Println(util.COMPILE)
-	verdict, failedTestCaseNumber, userOutput := compile.CompileAndRun(strconv.Itoa(1), problem.Testcases, submissionRequest.Code, submissionRequest.Language)
+	verdict, failedTestCaseNumber, userOutput := compile.CompileAndRun(strconv.Itoa(submissionRequest.OwnerID), problem.Testcases, submissionRequest.Code, submissionRequest.Language)
 	var failedCase entities.FailedTestCase
 	var accepted = true
 	if verdict != "Correct" && submissionRequest.IsContest == false {
@@ -129,21 +130,13 @@ func Submit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println(util.CREATING_DATABASE_CONNECTION)
-	defer dbconnection.Cancel()
+	// defer dbconnection.Cancel()
 	if err != nil {
 		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		log.Fatal(err)
 		return
 	}
 	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
-
-	fmt.Println(util.PING_DATABASE)
-	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
-	if err != nil {
-		fmt.Println(util.PING)
-		log.Fatal(err)
-		return
-	}
 
 	fmt.Println(util.INSERT_SUBMISSION)
 
@@ -202,7 +195,7 @@ func getIdfromEmail(authEmail string) int {
 		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		panic(err)
 	}
-	defer dbConnection.CloseSession()
+	// defer dbConnection.CloseSession()
 	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
 
 	cursor, err := dbConnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": authEmail}, bson.M{})

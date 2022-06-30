@@ -71,6 +71,17 @@ func createCodeFile(code string, submissionId string, language string) error {
 
 	return nil
 }
+
+func deleteCodeFile(submissionId string, language string) {
+	wd, _ := os.Getwd()
+	switch language {
+	case "cpp":
+		os.Remove(wd + "/" + submissionId + ".cpp")
+		os.Remove(wd + "/" + submissionId + ".out")
+	default: // newly supported languages will be inserted here
+		fmt.Println("Language is not supported")
+	}
+}
 func compile(code string, submissionId string, language string) error {
 
 	cmd := getCompilingCommand(language, submissionId)
@@ -128,13 +139,16 @@ func CompileAndRun(submissionId string, problemtestcases []entities.TestCase, co
 		if err != nil {
 			fmt.Println(cmd.Path)
 			fmt.Println("Error couldn't run")
+			deleteCodeFile(submissionId, language)
 			return "Runtime Error", i, ""
 		}
 		output := out.String()
 		if output != v.Output {
+			deleteCodeFile(submissionId, language)
 			return "Wrong Answer", i, output
 		}
 	}
+	deleteCodeFile(submissionId, language)
 	return "Correct", 0, ""
 
 }

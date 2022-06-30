@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
 	"time"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
@@ -29,6 +30,23 @@ type User struct {
 	runtimeCount             int    `json:"runtimeCount"`
 }
 
+type MongoUser struct {
+	Firstname              string    `bson:"firstName"`
+	Lastname               string    `bson:"lastName"`
+	ID                     int       `bson:"_id"`
+	RegistrationDate       time.Time `bson:"registrationDate"`
+	Email                  string    `bson:"email"`
+	Groups                 string    `bson:"groups"`
+	Rating                 int       `bson:"rating"`
+	Password               string    `bson:"password"`
+	Country                string    `bson:"country"`
+	Organization           string    `bson:"organization"`
+	AcceptedCount          int       `bson:"acceptedCount"`
+	RuntimeCount           int       `bson:"runtimeCount"`
+	TimeLimitExceededCount int       `bson:"timelimit_exceeded_count"`
+	WrongCount             int       `bson:"wrongCount"`
+}
+
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
@@ -41,45 +59,47 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var user User
 
-	fmt.Println()
-	fmt.Println(util.DECODE_USER)
+	// fmt.Println()
+	// fmt.Println(util.DECODE_USER)
 	err := decoder.Decode(&user)
 	if err != nil {
-		fmt.Println(util.DECODE_USER_FAILED)
+		// fmt.Println(util.DECODE_USER_FAILED)
 		return
 	}
-	fmt.Println(util.DECODE_USER_SUCCESS)
+	// fmt.Println(util.DECODE_USER_SUCCESS)
 
 	//Adding to Database.
-	fmt.Println(util.CREATING_DATABASE_CONNECTION)
-	dbconnection, err := db.CreateDbConn()
-	defer dbconnection.Cancel()
+	// fmt.Println(util.CREATING_DATABASE_CONNECTION)
+	// // dbconnection, err := db.CreateDbConn()
+	dbconnection := db.DbConn
+	// // defer dbconnection.Cancel()
 	if err != nil {
-		fmt.Println(util.DATABASE_FAILED_CONNECTION)
+		// fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		log.Fatal(err)
 		return
 	}
-	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
 
-	fmt.Println(util.FETCHING_USER_FROM_EMAIL + user.Email)
+	// fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
+
+	// fmt.Println(util.FETCHING_USER_FROM_EMAIL + user.Email)
 	cursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": user.Email}, bson.M{})
 	if err != nil {
-		fmt.Println(util.QUERY)
+		// fmt.Println(util.QUERY)
 		log.Fatal(err)
 	}
 	var checkmail []bson.M
 	if err = cursor.All(dbconnection.Ctx, &checkmail); err != nil {
-		fmt.Println(util.CURSOR)
+		// fmt.Println(util.CURSOR)
 		log.Fatal(err)
 	}
 
 	var errorUserExists bool
 	if len(checkmail) != 0 {
-		fmt.Println(util.USER_ERROR)
+		// fmt.Println(util.USER_ERROR)
 		errorUserExists = true
 		json.NewEncoder(w).Encode(&errorUserExists)
 	} else {
-		fmt.Println(util.CREATE_USER_ID)
+		// 	fmt.Println(util.CREATE_USER_ID)
 		idHex := primitive.NewObjectID().Hex()
 		id, erro := strconv.ParseInt(idHex[12:], 16, 64)
 		if erro != nil {
@@ -90,7 +110,9 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(&errorUserExists)
 		fmt.Println(util.USER_ID_SUCCESS)
 		fmt.Println(util.INSERT_USER)
-		_, err := dbconnection.InsertOne(util.DB_NAME, util.USERS_COLLECTION, bson.D{
+
+		// m := MongoUser{user.Firstname, user.Lastname, int(id), time.Now(), user.Email, "beginner", 0, "", user.Country, user.Organization, user.acceptedCount, user.runtimeCount, user.timelimit_exceeded_count, user.wrongCount}
+		bs := bson.D{
 			{Key: "firstName", Value: user.Firstname},
 			{Key: "lastName", Value: user.Lastname},
 			{Key: "_id", Value: int(id)},
@@ -98,14 +120,16 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 			{Key: "email", Value: user.Email},
 			{Key: "groups", Value: "beginner"},
 			{Key: "rating", Value: 0},
-			{Key: "password", Value: HashPassword(user.Password)},
+			{Key: "password", Value: user.Password},
 			{Key: "country", Value: user.Country},
 			{Key: "organization", Value: user.Organization},
 			{Key: "acceptedCount", Value: user.acceptedCount},
 			{Key: "runtimeCount", Value: user.runtimeCount},
 			{Key: "timelimit_exceeded_count", Value: user.timelimit_exceeded_count},
 			{Key: "wrongCount", Value: user.wrongCount},
-		})
+		}
+
+		_, err := dbconnection.InsertOne(util.DB_NAME, util.USERS_COLLECTION, bs)
 		if err != nil {
 			fmt.Println(util.INSERT_USER_FAILED)
 			log.Fatal(err)
