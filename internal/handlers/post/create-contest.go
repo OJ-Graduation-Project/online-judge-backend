@@ -56,13 +56,6 @@ func CreateContest(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
 
-	fmt.Println(util.PING_DATABASE)
-	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
-	if err != nil {
-		fmt.Println(util.PING)
-		return
-	}
-
 	fmt.Println(util.INSERT_CONTEST)
 	_, err = dbconnection.InsertOne(util.DB_NAME, util.CONTESTS_COLLECTION, contest)
 	if err != nil {

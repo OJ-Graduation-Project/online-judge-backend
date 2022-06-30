@@ -21,7 +21,7 @@ func ProblemHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	decoder := json.NewDecoder(r.Body)
 	var problem DisplayProblem
-	
+
 	fmt.Println()
 	fmt.Println(util.DECODE_PROBLEM)
 	err := decoder.Decode(&problem)
@@ -33,22 +33,15 @@ func ProblemHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(util.DECODE_PROBLEM_SUCCESS)
 
 	fmt.Println(util.CREATING_DATABASE_CONNECTION)
-	dbconnection, err := db.CreateDbConn()
-	defer dbconnection.Cancel()
+	// dbconnection, err := db.CreateDbConn()
+	dbconnection := db.DbConn
+	// defer dbconnection.Cancel()
 	if err != nil {
 		fmt.Println(util.DATABASE_FAILED_CONNECTION)
 		log.Fatal(err)
 		return
 	}
 	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
-
-	fmt.Println(util.PING_DATABASE)
-	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
-	if err != nil {
-		fmt.Println(util.PING)
-		log.Fatal(err)
-		return
-	}
 
 	fmt.Println(util.FETCHING_PROBLEM + problem.Name)
 	filterCursor, err := dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, bson.M{"problemName": problem.Name}, bson.M{})
@@ -67,6 +60,6 @@ func ProblemHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(util.EMPTY_PROBLEM + problem.Name)
 		return
 	}
-	 fmt.Println(util.RETURNING_PROBLEM)
+	fmt.Println(util.RETURNING_PROBLEM)
 	json.NewEncoder(w).Encode(&returnedProblem[0])
 }

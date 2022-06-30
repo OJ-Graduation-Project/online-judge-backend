@@ -43,16 +43,8 @@ func TopicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
 
-	fmt.Println(util.PING_DATABASE)
-	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
-	if err != nil {
-		fmt.Println(util.PING)
-		log.Fatal(err)
-		return
-	}
-
 	fmt.Println(util.FETCHING_PROBLEMS_FROM_TOPIC + topicProblems.Name)
-	 query := bson.M{"topic": bson.M{"$in": bson.A{topicProblems.Name}}}
+	query := bson.M{"topic": bson.M{"$in": bson.A{topicProblems.Name}}}
 	// desiredProblems := QueryToCheckResults(dbconnection, util.PROBLEMS_COLLECTION, query)
 	filterCursor, err := dbconnection.Query(util.DB_NAME, util.PROBLEMS_COLLECTION, query, bson.M{})
 	if err != nil {

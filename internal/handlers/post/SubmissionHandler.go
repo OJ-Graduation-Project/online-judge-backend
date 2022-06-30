@@ -20,7 +20,7 @@ type DisplaySubmission struct {
 func SubmissionHandler(w http.ResponseWriter, r *http.Request) {
 
 	submissionID, _ := strconv.Atoi(mux.Vars(r)["id"])
-	
+
 	fmt.Println()
 	fmt.Println(util.CREATING_DATABASE_CONNECTION)
 	dbconnection, err := db.CreateDbConn()
@@ -31,14 +31,6 @@ func SubmissionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
-
-	fmt.Println(util.PING_DATABASE)
-	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
-	if err != nil {
-		fmt.Println(util.PING)
-		log.Fatal(err)
-		return
-	}
 
 	w.WriteHeader(http.StatusOK)
 	defer r.Body.Close()

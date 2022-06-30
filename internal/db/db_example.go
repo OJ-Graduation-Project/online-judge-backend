@@ -19,11 +19,7 @@ func Example() {
 		fmt.Println("Error")
 
 	}
-	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
-	if err != nil {
-		fmt.Println("Error")
 
-	}
 	d := dummy{"asd"}
 	result, err := dbconnection.InsertOne("example_database", "mycollection", d)
 	if err != nil {

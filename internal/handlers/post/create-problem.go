@@ -23,7 +23,7 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 	var problem entities.Problem
-	
+
 	fmt.Println()
 	fmt.Println(util.DECODE_PROBLEM)
 	err := decoder.Decode(&problem)
@@ -42,7 +42,6 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 	}
 	problem.ID = int(id)
 	println(util.PROBLEM_ID_SUCCESS + problem.Name)
-
 
 	problem.NumberOfSubmissions = -1
 	for i := 0; i < len(problem.Testcases); i++ {
@@ -74,14 +73,6 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println(util.DATABASE_SUCCESS_CONNECTION)
-
-	fmt.Println(util.PING_DATABASE)
-	err = dbconnection.Conn.Ping(dbconnection.Ctx, nil)
-	if err != nil {
-		fmt.Println(util.PING)
-		log.Fatal(err)
-		return
-	}
 
 	fmt.Println(util.GETTING_USER)
 	filterCursor, err := dbconnection.Query(util.DB_NAME, util.USERS_COLLECTION, bson.M{"email": authEmail}, bson.M{})
@@ -125,7 +116,6 @@ func CreateProblem(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(util.INSERT_PROBLEM)
 	fmt.Println(util.INSERT_PROBLEM)
-
 
 	_, err = dbconnection.InsertOne(util.DB_NAME, util.PROBLEMS_COLLECTION, problem)
 	if err != nil {

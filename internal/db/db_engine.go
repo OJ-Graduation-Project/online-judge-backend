@@ -20,11 +20,13 @@ type DbConnection struct {
 	Cancel context.CancelFunc
 }
 
+var DbConn DbConnection
+
 //Create a mongodb connection, return error if wasn't successful.
 func CreateDbConn() (DbConnection, error) {
 	//timeout for context.
 	mongo_uri := fmt.Sprintf("mongodb://%s:%s", config.AppConfig.Mongo.Host, config.AppConfig.Mongo.Port)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3600*time.Second)
 	conn, err := mongo.Connect(ctx, options.Client().ApplyURI(mongo_uri))
 	if err != nil {
 		log.Println("Error couldn't connect to database")
