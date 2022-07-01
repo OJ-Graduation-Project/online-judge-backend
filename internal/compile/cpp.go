@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/util"
 	"github.com/OJ-Graduation-Project/online-judge-backend/pkg/entities"
 )
 
@@ -26,13 +27,13 @@ func getExecutionCommand(language string, submissionId string) *exec.Cmd {
 	wd, _ := os.Getwd()
 	switch language {
 	case "cpp":
-		return exec.Command("./" + submissionId + ".out")
+		return exec.Command("sh", "-c", `ulimit -v 256000 ; timeout -s SIGINT 2s  ./`+submissionId+".out")
 	case "java":
 		return exec.Command("java", wd+"/"+submissionId+"/Main.java")
 	case "python":
 		return exec.Command("python3", wd+"/"+submissionId+".py")
 	case "c":
-		return exec.Command("./" + submissionId + ".out")
+		return exec.Command("ulimit -v 256000 && ", "timeout -s SIGQUIT 2s ./"+submissionId+".out")
 	default:
 		return nil
 	}
@@ -44,6 +45,7 @@ func createCodeFile(code string, submissionId string, language string) error {
 	switch language {
 	case "cpp":
 		f, err = os.Create(wd + "/" + submissionId + ".cpp")
+		code = util.SECURITY_CODE + code
 	case "java":
 		err = os.Mkdir(wd+"/"+submissionId, 0775)
 		if err != nil {
@@ -54,6 +56,7 @@ func createCodeFile(code string, submissionId string, language string) error {
 		f, err = os.Create(wd + "/" + submissionId + ".py")
 	case "c":
 		f, err = os.Create(wd + "/" + submissionId + ".c")
+		code = util.SECURITY_CODE + code
 	default: // newly supported languages will be inserted here
 		fmt.Println("Language is not supported")
 	}
@@ -97,6 +100,7 @@ func compile(code string, submissionId string, language string) error {
 	if err != nil {
 		fmt.Println(cmd.Args)
 		fmt.Println("Error couldn't compile file")
+		fmt.Println(stderr.String())
 	}
 	output := stdout.String()
 	erro := stderr.String()

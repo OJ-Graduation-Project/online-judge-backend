@@ -1,7 +1,7 @@
 FROM golang:1.17-alpine
 
 WORKDIR /app
-RUN apk --no-cache add gcc g++ 
+RUN apk --no-cache add gcc g++ linux-headers
 
 COPY go.mod ./
 COPY go.sum ./

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/config"
 
@@ -18,7 +17,7 @@ func main() {
 
 	// env file path
 	var envFilePath string
-	os.Stdout = nil
+
 	flag.StringVar(
 		&envFilePath,
 		"env",
