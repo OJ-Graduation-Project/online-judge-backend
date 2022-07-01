@@ -104,23 +104,30 @@ static void install_syscall_filter(void)
 #ifdef __NR_sigreturn
 		ALLOW_SYSCALL(sigreturn),
 #endif
-		ALLOW_SYSCALL(exit_group),
-		ALLOW_SYSCALL(exit),
-		ALLOW_SYSCALL(read),
-		ALLOW_SYSCALL(write),
-        ALLOW_SYSCALL(close),
-        ALLOW_SYSCALL(fstat),
-        ALLOW_SYSCALL(lseek),
-        ALLOW_SYSCALL(mmap),
-        ALLOW_SYSCALL(mprotect),
-        ALLOW_SYSCALL(munmap),
-        ALLOW_SYSCALL(brk),
-        ALLOW_SYSCALL(pread64),
-        ALLOW_SYSCALL(access),
-        ALLOW_SYSCALL(execve),
-        ALLOW_SYSCALL(arch_prctl),
-        ALLOW_SYSCALL(openat),
-		KILL_PROCESS,
+ALLOW_SYSCALL(exit_group),
+ALLOW_SYSCALL(exit),
+ALLOW_SYSCALL(read),
+ALLOW_SYSCALL(write),
+ALLOW_SYSCALL(close),
+ALLOW_SYSCALL(fstat),
+ALLOW_SYSCALL(lseek),
+ALLOW_SYSCALL(mmap),
+ALLOW_SYSCALL(mprotect),
+ALLOW_SYSCALL(munmap),
+ALLOW_SYSCALL(brk),
+ALLOW_SYSCALL(pread64),
+ALLOW_SYSCALL(access),
+ALLOW_SYSCALL(execve),
+ALLOW_SYSCALL(arch_prctl),
+ALLOW_SYSCALL(openat),
+ALLOW_SYSCALL(open),
+ALLOW_SYSCALL(writev),
+ALLOW_SYSCALL(ioctl),
+ALLOW_SYSCALL(execve),
+ALLOW_SYSCALL(fcntl),
+ALLOW_SYSCALL(arch_prctl),
+ALLOW_SYSCALL(set_tid_address),
+KILL_PROCESS,
 	};
 	struct sock_fprog prog = {
 		.len = (unsigned short)(sizeof(filter)/sizeof(filter[0])),
@@ -136,7 +143,8 @@ int main(int argc, char **argv)
    install_syscall_filter();
     implement();
    
-}`
+}
+`
 
 	//Constants for errors:
 	DATABASE_FAILED_CONNECTION = "[LOG] Error couldn't connect to database!"
