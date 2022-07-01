@@ -120,7 +120,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 			{Key: "email", Value: user.Email},
 			{Key: "groups", Value: "beginner"},
 			{Key: "rating", Value: 0},
-			{Key: "password", Value: user.Password},
+			{Key: "password", Value: HashPassword(user.Password)},
 			{Key: "country", Value: user.Country},
 			{Key: "organization", Value: user.Organization},
 			{Key: "acceptedCount", Value: user.acceptedCount},

@@ -21,7 +21,7 @@ type LoginUser struct {
 func HashPassword(password string) string {
 
 	fmt.Println(util.HASHING_PASSWORD)
-	pwSlice, err := bcrypt.GenerateFromPassword([]byte(password), 1)
+	pwSlice, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
 		fmt.Println(util.HASHING_PASSWORD_FAILED)
 	}

@@ -8,7 +8,7 @@ import (
 
 	"github.com/OJ-Graduation-Project/online-judge-backend/config"
 
-	// "github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
+	"github.com/OJ-Graduation-Project/online-judge-backend/internal/contest"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/db"
 	"github.com/OJ-Graduation-Project/online-judge-backend/internal/routes"
 )
@@ -39,8 +39,8 @@ func main() {
 	config.LoadEnv(envFilePath)
 	config.LoadConfig(configFilePath)
 
-	// all := contest.GetInstance()
-	// all.GetContestAndStart(142995735221753)
+	all := contest.GetInstance()
+	all.GetContestAndStart(142995735221753)
 
 	var err error
 	db.DbConn, err = db.CreateDbConn()
